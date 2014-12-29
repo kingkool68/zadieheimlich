@@ -128,7 +128,7 @@ font-family:Helvetica, Arial, sans-serif
 
 <body>
 	<h1>Zadie Alyssa Heimlich</h1>
-	<h2>Born <time datetime="<?php echo date('c', $birth_date); ?>">Sunday December 28, 2014 at 7:04 pm</time> <a href="img/birth-announcement.jpg" id="birth-announcement">Birth Announcemnt</a></h2>
+	<h2>Born <time datetime="<?php echo date('c', $birth_date); ?>">Sunday December 28, 2014 at 7:04 pm</time> <a href="img/birth-announcement.jpg" id="birth-announcement">Birth Announcement</a></h2>
 	<p id="her-age">She is <?php echo rh_human_time_diff(2, $birth_date);?> old.</p>
 	
 	<?php
