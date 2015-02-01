@@ -11,6 +11,8 @@
 <meta name="date" content="<?= date('Ymd',strtotime($post->post_date)); ?>">
 
 <link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>">
+<link rel="shortcut icon" href="<?php echo get_site_url(); ?>favicon.ico" type="image/x-icon">
+<link rel="icon" href="<?php echo get_site_url(); ?>favicon.ico" type="image/x-icon">
 <?php wp_head(); ?>
 </head>
 
