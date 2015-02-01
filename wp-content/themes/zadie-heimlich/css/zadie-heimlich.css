@@ -1,0 +1,377 @@
+/* Use .hide for completely hidding an element from visual and screen readers */
+.hide,
+.has-js .hide-if-js {
+display:none!important;
+}
+
+/*
+Use .hidden to visual hide an element but still making it accessible to screen readers.
+#top is the ID of the Skip link.
+ */
+#top,
+.hidden {
+left:-999em;
+position:absolute;
+top:auto;
+.top:-999em;
+}
+
+/*
+For visually hiding text yet still making it accessible to screen readers
+via http://www.zeldman.com/2012/03/01/replacing-the-9999px-hack-new-image-replacement/
+*/
+.alt-text {
+text-indent: 100%;
+white-space: nowrap;
+overflow: hidden;
+}
+
+/* If the skip link is focused using the keyboard then show it. */
+#top:focus {
+position:static;
+font-size:1.5em;
+background-color:#FFFFD5;
+display:block;
+font-weight:700;
+color:#000;
+padding:2px 15px 5px;
+}
+
+/* Should only be used as a last resort if clearing floats with overflow:hidden|auto doesn't work. */
+.clearfix {
+zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+content: ".";    
+display: block;    
+height: 0;    
+overflow: hidden;	
+zoom: 1;
+}
+.clearfix:after {clear: both;}
+
+
+
+html {
+font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+font-weight:300;
+background-color:#7b0e7f;
+background-image:url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
+background-repeat:repeat;
+background-attachment:fixed;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+}
+h1 {
+font-size:4.5em;
+font-weight:700;
+}
+h2 {
+font-size:2em;
+font-style:italic;
+margin-bottom:0.4em;
+}
+a {
+text-decoration:none;
+color:#C568C8;
+border-bottom:0.15em dotted #C568C8;
+}
+a:hover,
+a:focus {
+color:#F8B1FA;
+border-bottom-color:#F8B1FA;
+}
+a:focus {
+outline-color:#F8B1FA;
+}
+p {
+font-size:1.8em;
+line-height:1.5;
+}
+strong,
+b {
+font-weight:700;
+}
+em,
+i {
+font-weight:500;
+}
+
+/* Media */
+img {
+max-width:100%;
+height:auto;
+border:0.3em solid #fff;
+border-radius:1em;
+box-sizing:border-box;
+}
+img.alignleft {
+float:left;
+margin-right:1em;
+}
+img.alignright {
+float:right;
+margin-left:1em;
+}
+img.aligncenter {
+display:block;
+margin-left:auto;
+margin-right:auto;
+}
+img.from-instagram {
+margin-bottom:1em;
+margin-top:-1em;
+
+}
+.gallery {
+overflow:auto;
+height:100%;
+}
+.gallery a {
+float:left;
+padding:1em 0;
+}
+.gallery img {
+display:block;
+margin:0 auto;
+}
+.gallery-2-column a {
+width:50%;
+}
+.gallery-3-column a {
+width:33.3333%;
+}
+.gallery-4-column a {
+width:33.3333%;
+}
+.gallery-5-column a {
+width:33.3333%;
+}
+.gallery-6-column a {
+width:33.3333%;
+}
+.gallery-7-column a {
+width:33.3333%;
+}
+.gallery-8-column a {
+width:12.5%;
+}
+.gallery-9-column a {
+width:11.11111%;
+}
+.gallery-10-column a {
+width:10%;
+}
+
+
+header {
+background-color:#fff;
+background-image:url(/wp-content/themes/zadie-heimlich/img/symphony-light-purple.png);
+background-repeat:repeat;
+background-attachment:fixed;
+padding:2em 4em 1.5em;
+overflow:auto;
+height:100%;
+}
+header .site-title {
+margin-top:0;
+text-transform:uppercase;
+font-size:8em;
+float:left;
+}
+header .site-title,
+header .site-title a {
+color:#7b0e7f;
+border-bottom-width:0;
+display:block;
+}
+header .site-title a {
+border-radius:1em;
+padding:0 0.3em;
+}
+header .site-title a:hover,
+header .site-title a:focus {
+background-color:#B47FB6;
+background-color:rgba(180,127,182, 0.5);
+color:#9B3F9E;
+}
+header .zadies-current-age {
+color:#BB85BD;
+float:right;
+margin-top:1.6em;
+font-size:2.5em;
+font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+}
+
+.holder {
+margin:0 auto;
+max-width:105em;
+padding:0 2em;
+color:#fff;
+}
+
+
+/* Article */
+article {
+border-top:0.5em solid rgba(255, 255, 255, 0.5);
+padding:3em 0 5em;
+}
+article .inner {
+padding-bottom:2.5em;
+}
+article:first-of-type {
+border-top:0 none;
+}
+article .time-stamp {
+margin-bottom:2.4em;
+font-size:2em;
+}
+article .colon {
+font-size:75%;
+display:inline-block;
+padding:0.1em;
+}
+article .am-pm {
+text-transform:uppercase;
+font-size:50%;
+position:relative;
+left:-0.15em;
+}
+article .title a {
+color:#fff;
+border-bottom:0 none;
+border-radius: 1em;
+padding:0.2em 0.5em;
+display:inline-block;
+}
+article .title a:hover,
+article .title a:focus {
+background-color:#B47FB6;
+background-color:rgba(180,127,182, 0.5);
+color:#F8B1FA;
+}
+
+article.instagram .inner {
+max-width:65em;
+margin:0 auto;
+}
+article.instagram .title,
+article.instagram .time-stamp {
+text-align:center;
+}
+article.instagram p {
+margin-bottom:0.5em;
+}
+
+article.post .title {
+line-height:1.3333;
+}
+article.post .time-stamp {
+line-height:1.25;
+margin-top:-0.3em;
+}
+article.post .title a {
+margin-left:-0.5em;
+}
+article.post .inner p {
+margin-bottom:1em;
+max-width:35em;
+padding-left:2.5em;
+}
+
+
+
+
+/* Nav */
+nav {
+padding-bottom:3.5em;
+}
+nav a {
+display:block;
+border:0.15em solid #B47FB6;
+border-radius:1em;
+background-color:#6B006F;
+color:#fff;
+font-size:1.8em;
+text-align:center;
+padding:0.8em;
+}
+nav a:hover,
+nav a:focus {
+background-color:#B47FB6;
+color:#fff;
+}
+
+@media (max-width:60.625em) { /* 970px / 16 */
+	header {
+	font-size:80%;
+	}
+	article .title {
+	font-size:3.5em;
+	}
+}
+
+@media (max-width:49.0625em) { /* 785px / 16 */
+	header {
+	font-size:68%;
+	}
+	article .title {
+	font-size:3.2em;
+	}
+}
+
+@media (max-width:47.5em) { /* 760px / 16 */
+	article.post .inner p {
+	padding-left:0;
+	}
+}
+
+@media (max-width:42.5em) { /* 680px / 16 */
+	header .site-title,
+	header .zadies-current-age {
+	float:none;
+	text-align:center;
+	}
+	header .zadies-current-age {
+	margin-top:0;
+	}
+}
+
+@media (max-width:40em) { /* 640px / 16 */
+	header .site-title a {
+	padding-top:0.1em;
+	padding-bottom:0.1em;
+	}
+}
+
+@media (max-width:35em) { /* 560px / 16 */
+	img {
+	border-width:0.2em;
+	}
+	article .time-stamp b {
+	display:none;
+	}
+	
+	article.post .title {
+	margin-bottom:0.3em;
+	}
+	article.post .how-old-was-zadie {
+	display:block;
+	margin-top:0.3em;
+	}
+}
+
+@media (max-width:30em) { /* 480px / 16 */
+	article.instagram .time {
+	display:block;
+	font-size:80%;
+	padding-bottom:0.5em;
+	}
+}
