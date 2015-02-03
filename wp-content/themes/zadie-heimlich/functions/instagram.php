@@ -53,26 +53,35 @@ class ZAH_Instagram {
 	}
 	
 	function admin_menu() {
-		add_options_page( 'Zadie\'s Instagram Settings', 'Instagram', 'manage_options', 'zah-instagram', array($this, 'options_page') );
+		add_submenu_page( 'edit.php?post_type=instagram', 'Manual Sync', 'Manual Sync', 'manage_options', 'zah-instagram', array($this, 'options_page') );
 	}
 
 	function options_page() {
 		$action = $_GET['action'];
-		
+		?>
+		<?php
 		//MANUAL SYNC
 		if( isset( $action ) && $action == 'manual-sync' ) {
+			$date_limit = 0;
+			if( isset( $_POST['date-limit'] ) ) {
+				$date_limit = strtotime( $_POST['date-limit'] );
+			}
 		?>
-			<h1>Manaul Sync</h1>
-			<div id="results">
-			
+			<div class="wrap">
+				<h1>Manaul Sync</h1>
+				<div id="results">
+				
+				</div>
+				<ul id="stats">
+					<li>Total: <span id="total">0</span></li>
+					<li>Skipped: <span id="skipped">0</span></li>
+				</ul>
 			</div>
-			<ul id="stats">
-				<li>Total: <span id="total">0</span></li>
-				<li>Skipped: <span id="skipped">0</span></li>
-			</ul>
-			
+				
 			<script>
 			jQuery(document).ready(function($) {
+				
+				var dateLimit = <?php echo intval($date_limit); ?>;
 				
 				function update_the_page( data ) {
 					if( imgs = data.imgs ) {
@@ -91,6 +100,7 @@ class ZAH_Instagram {
 						if( next_max_id = resp.data.next_max_id ) {
 							send_the_ajax_request({
 								'action': 'zah_instagram_manual_sync',
+								'date-limit': dateLimit,
 								'next_max_id': next_max_id
 							});
 						}
@@ -99,7 +109,8 @@ class ZAH_Instagram {
 				
 				//Kick things off...
 				send_the_ajax_request({
-					'action': 'zah_instagram_manual_sync'
+					'action': 'zah_instagram_manual_sync',
+					'date-limit': dateLimit
 				});
 		
 				
@@ -111,11 +122,27 @@ class ZAH_Instagram {
 		
 		//DEFAULT
 		?>
-		<h1>Zadie's Instagram Settings</h1>
-		<h2>Manaully Sync</h2>
-		<p>Make sure all of the Instagram photos tagged with <strong>#ZadieAlyssa</strong> are saved as posts on this site. Nothing will be overwritten, only missing Instagram photos will be added.</p>
-		<p><a class="button-primary" href="<?php echo admin_url( 'options-general.php?page=zah-instagram&action=manual-sync' );?>">Sync</a></p>
-		
+		<div class="wrap">
+			<h1>Manaully Sync Instagram</h1>
+			<p>Make sure all of the Instagram photos tagged with <strong>#ZadieAlyssa</strong> are saved as posts on this site. Nothing will be overwritten, only missing Instagram photos will be added.</p>
+			<form action="<?php echo admin_url( 'edit.php?post_type=instagram&page=zah-instagram&action=manual-sync' );?>" method="post">
+				
+				<table class="form-table">
+					<tbody>
+						<tr class="form-field">
+							<th scope="row" valign="top"><label for="date-limit">Date Limit</label></th>
+							<td>
+								<input type="date" name="date-limit" id="date-limit" value=""><br>
+								<em>Only Sync Instagram photos posted between now and this date</em>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				
+				<p><input type="submit" class="button-primary" value="Sync"></p>
+			</form>
+		</div>
 	<?php
 	}
 	
@@ -132,6 +159,11 @@ class ZAH_Instagram {
 		if( isset( $resp->pagination->next_url ) ) {
 			$next_max_id =  $resp->pagination->next_max_tag_id;
 		}
+		$date_limit = 0;
+		if( isset( $_POST['date-limit'] ) ) {
+			$date_limit = intval( $_POST['date-limit'] );
+		}
+		
 		$output = array(
 			'next_max_id' => $next_max_id,
 			'imgs' => array(),
@@ -141,7 +173,14 @@ class ZAH_Instagram {
 		$images = $resp->data;
 		//$images = array( $images[0] );
 		foreach( $images as $img ) {
+			//If the $img was posted later than our break limit then we need to stop
+			if( intval( $img->caption->created_time ) < $date_limit ) {
+				unset( $output[ 'next_max_id' ] );
+				break;
+			}
+			
 			$output['total']++;
+			
 			$permalink = $img->link;
 			$query = "SELECT `ID` FROM `" . $wpdb->posts . "` WHERE `guid` = '" . $permalink . "' LIMIT 0,1;";
 			$found = $wpdb->get_var( $query );
@@ -150,7 +189,8 @@ class ZAH_Instagram {
 			}
 			
 			if( !$found ) {
-				$inserted = $this->insert_instagram_post( $img );
+				$inserted = false;
+				//$inserted = $this->insert_instagram_post( $img );
 				if( $inserted ) {
 					$wp_permalink = get_permalink( $inserted );
 					$caption = $img->caption->text;
