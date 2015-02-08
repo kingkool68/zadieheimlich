@@ -416,6 +416,12 @@ class ZAH_Instagram {
 	}
 	
 	public function insert_instagram_post( $img ) {
+		if( !function_exists('download_url') ) {
+			//require_once ABSPATH . 'wp-admin/includes/file.php';
+			//media_handle_sideload()
+			require_once ABSPATH . 'wp-admin/includes/admin.php';
+		}
+		
 		//Assumes $img is an instagram media object returned from the API
 		$src = $img->images->standard_resolution->url;
 		
