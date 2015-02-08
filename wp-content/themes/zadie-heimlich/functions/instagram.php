@@ -448,6 +448,29 @@ class ZAH_Instagram {
 			return false;
 		}
 		
+		if( $img->type == 'video' ) {
+			$video_file = $img->videos->standard_resolution->url;
+			$tmp = download_url( $video_file );
+			
+			$file_array = array();
+			$file_array['name'] = $slug . '.mp4';
+			$file_array['tmp_name'] = $tmp;
+
+			// If error storing temporarily, unlink
+			if ( is_wp_error( $tmp ) ) {
+				@unlink($file_array['tmp_name']);
+				$file_array['tmp_name'] = '';
+			}
+
+			// do the validation and storage stuff
+			$video_id = media_handle_sideload( $file_array, $inserted, $caption );
+
+			// If error storing permanently, unlink
+			if ( is_wp_error($video_id) ) {
+				@unlink($file_array['tmp_name']);
+			}
+		}
+		
 		$attachment_data = array(
 			'post_content' => $caption,
 			'post_title' => 'Instagram: ' . $slug,
@@ -460,6 +483,12 @@ class ZAH_Instagram {
 			'alt' => ''
 		);
 		$updated_post_content = wp_get_attachment_image( $attachment_id, 'full', false, $img_attr ) . "\n\n" . $caption;
+		if( $img->type == 'video' ) {
+			$video_src = wp_get_attachment_url( $video_id );
+			$poster = wp_get_attachment_image_src( $attachment_id, 'full' );
+			$updated_post_content = '[video src="' . $video_src . '" poster="' . $poster[0] . '"]' . "\n\n" . $caption;
+		}
+		
 		$updated_post = array(
 			'ID' => $inserted,
 			'post_content' => $updated_post_content,

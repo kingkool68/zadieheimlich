@@ -105,12 +105,16 @@ font-weight:500;
 }
 
 /* Media */
-img {
+img,
+.wp-video {
 max-width:100%;
 height:auto;
 border:0.3em solid #fff;
 border-radius:1em;
 box-sizing:border-box;
+}
+.wp-video {
+font-size:1.8em;
 }
 img.alignleft {
 float:left;
@@ -125,10 +129,10 @@ display:block;
 margin-left:auto;
 margin-right:auto;
 }
-img.from-instagram {
+img.from-instagram,
+article.instagram .wp-video {
 margin-bottom:1em;
 margin-top:-1em;
-
 }
 .gallery {
 overflow:auto;
@@ -168,6 +172,11 @@ width:11.11111%;
 }
 .gallery-10-column a {
 width:10%;
+}
+
+/* Override the video player color defaults */
+article.instagram .mejs-controls .mejs-time-rail .mejs-time-current {
+background-color:#7b0e7f;
 }
 
 
