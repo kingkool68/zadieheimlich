@@ -318,7 +318,7 @@ background-color:#B47FB6;
 color:#fff;
 }
 
-@media (max-width:60.625em) { /* 970px / 16 */
+@media (max-width:62.5em) { /* 1000px / 16 */
 	header {
 	font-size:80%;
 	}
@@ -327,7 +327,7 @@ color:#fff;
 	}
 }
 
-@media (max-width:49.0625em) { /* 785px / 16 */
+@media (max-width:50em) { /* 800px / 16 */
 	header {
 	font-size:68%;
 	}
@@ -342,7 +342,7 @@ color:#fff;
 	}
 }
 
-@media (max-width:42.5em) { /* 680px / 16 */
+@media (max-width:43.75em) { /* 700px / 16 */
 	header .site-title,
 	header .zadies-current-age {
 	float:none;
