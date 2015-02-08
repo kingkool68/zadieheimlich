@@ -11,8 +11,10 @@ class ZAH_Instagram {
 		add_action( 'pre_get_posts', array($this, 'pre_get_posts') );
 		add_action( 'wp', array($this, 'wp') );
 		add_action( 'instagram_subscription_tag_zadiealyssa', array($this, 'instagram_realtime_update') );
+		add_action( 'manage_posts_custom_column' , array($this, 'manage_posts_custom_column') );
 		
 		add_filter( 'the_content', array($this, 'the_content') );
+		add_filter( 'manage_instagram_posts_columns', array($this, 'manage_instagram_posts_columns') );
 	}
 	
 	function init() {
@@ -374,6 +376,48 @@ class ZAH_Instagram {
 			if( !$found ) {
 				$inserted = $this->insert_instagram_post( $img );
 			}
+		}
+	}
+	
+	function manage_instagram_posts_columns( $columns ) {
+		$new_columns = array(
+			'cb' => $columns['cb'],
+			'title' => $columns['title'],
+			'instagram_photo' => 'Photo',
+			'instagram_permalink' => 'Instagram Permalink'
+		);
+		$remove_columns = array( 'cb', 'title', 'categories', 'tags' );
+		foreach( $remove_columns as $col ) {
+			unset( $columns[ $col ] );
+		}
+	
+		return array_merge($new_columns, $columns);
+	}
+	
+	function manage_posts_custom_column( $column, $post_id = 0 ) {
+		
+		switch( $column ) {
+			case 'instagram_photo':
+				$post = get_post( $post_id );
+				$featured_id = get_post_thumbnail_id( $post->ID );
+				if( !$featured_id ) {
+					//We don't have one so let's try and get a featured image...
+					$media = get_attached_media( 'image', $post->ID );
+					$media_ids = array_keys( $media );
+					$featured_id = $media_ids[0];
+					
+					add_post_meta( $post->ID, '_thumbnail_id', $featured_id );
+				}
+				
+				$img = wp_get_attachment_image_src( $featured_id, 'thumbnail' );
+				echo '<a href="' . get_permalink( $post->ID ) . '"><img src="' . $img[0] . '" width="' . $img[1] . '" height="' . $img[2] . '"></a>';
+				
+			break;
+			
+			case 'instagram_permalink':
+				$post = get_post( $post_id );
+				echo '<a href="' . $post->guid . '" target="_blank">@' . get_instagram_username() . '</a>';
+			break;
 		}
 	}
 
