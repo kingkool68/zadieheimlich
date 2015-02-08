@@ -237,7 +237,7 @@ class ZAH_Instagram {
 				</tbody>
 			</table>
 			
-			<input type="submit" value="Delete Subscriptions" class="button primary-button">
+			<p><input type="submit" value="Delete Subscriptions" class="button button-primary"></p>
 
 		<?php endif; ?>
 		
@@ -254,7 +254,7 @@ class ZAH_Instagram {
 		
 		<input type="text" name="object-id">
 		
-		<input type="submit" value="Add Subscription" class="button primary-button">
+		<p><input type="submit" value="Add Subscription" class="button button-primary"></p>
 		
 		</form>
 		<?php
