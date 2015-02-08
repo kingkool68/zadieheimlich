@@ -60,7 +60,10 @@ class ZAH_Instagram {
 	}
 
 	function manual_sync_submenu() {
-		$action = $_GET['action'];
+		$action = '';
+		if( isset($_GET['action']  ) ) {
+			$action = $_GET['action'];
+		}
 		?>
 		<?php
 		//MANUAL SYNC
