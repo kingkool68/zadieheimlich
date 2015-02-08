@@ -504,6 +504,9 @@ class ZAH_Instagram {
 		
 		update_post_meta( $inserted, 'instagram_username', $username );
 		
+		//Set the featured image
+		add_post_meta( $inserted, '_thumbnail_id', $attachment_id );
+		
 		if( $post['post_status'] != 'publish' ) {
 			//Send an email so we can approve the new photo ASAP!
 			$this->send_pending_post_notification_email( $inserted, $attachment_id );
