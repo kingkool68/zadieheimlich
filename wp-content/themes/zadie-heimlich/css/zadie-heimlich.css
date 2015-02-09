@@ -229,7 +229,8 @@ color:#fff;
 
 /* Article */
 article {
-border-top:0.5em solid rgba(255, 255, 255, 0.5);
+border-top:0.5em solid #C678BD;
+border-top-color:rgba(255, 255, 255, 0.5);
 padding:3em 0 5em;
 }
 article .inner {
