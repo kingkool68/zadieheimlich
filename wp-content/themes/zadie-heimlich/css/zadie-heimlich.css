@@ -116,15 +116,21 @@ box-sizing:border-box;
 .wp-video {
 font-size:1.8em;
 }
-img.alignleft {
+img.alignleft,
+figure.alignleft img {
 float:left;
 margin-right:1em;
 }
-img.alignright {
+img.alignright,
+figure.alignright img {
 float:right;
 margin-left:1em;
 }
-img.aligncenter {
+article img.alignright {
+margin:0.25em -20% 1em 2em;
+}
+img.aligncenter,
+figure.aligncenter img {
 display:block;
 margin-left:auto;
 margin-right:auto;
@@ -133,6 +139,19 @@ img.from-instagram,
 article.instagram .wp-video {
 margin-bottom:1em;
 margin-top:-1em;
+}
+.wp-caption {
+margin-bottom:1.8em;
+overflow:auto;
+height:100%;
+font-size:2em;
+}
+.wp-caption-text {
+font-size:0.7em;
+padding:0.75em 0.75em 0.75em 0;
+text-align:right;
+font-style:italic;
+clear:both;
 }
 .gallery {
 overflow:auto;
@@ -280,7 +299,8 @@ article.instagram p {
 margin-bottom:0.5em;
 }
 
-article.post .title {
+article.post .title,
+article.page .title {
 line-height:1.3333;
 }
 article.post .time-stamp {
@@ -290,7 +310,8 @@ margin-top:-0.3em;
 article.post .title a {
 margin-left:-0.5em;
 }
-article.post .inner p {
+article.post .inner p,
+article.page .inner p {
 margin-bottom:1em;
 max-width:35em;
 padding-left:2.5em;
@@ -338,7 +359,8 @@ color:#fff;
 }
 
 @media (max-width:47.5em) { /* 760px / 16 */
-	article.post .inner p {
+	article.post .inner p,
+	article.page .inner p {
 	padding-left:0;
 	}
 }
@@ -369,7 +391,8 @@ color:#fff;
 	display:none;
 	}
 	
-	article.post .title {
+	article.post .title,
+	article.page .title {
 	margin-bottom:0.3em;
 	}
 	article.post .how-old-was-zadie {

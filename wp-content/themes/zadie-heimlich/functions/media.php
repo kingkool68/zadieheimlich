@@ -1,4 +1,15 @@
 <?php
+//Custom image sizes
+add_image_size( '350-wide', 350 );
+
+function zah_image_size_names_choose($sizes) {
+	$addsizes = array(
+		'350-wide' => '350 Wide'
+	);
+	return array_merge($sizes, $addsizes);
+}
+add_filter('image_size_names_choose', 'zah_image_size_names_choose');
+
 function html5_img_caption_shortcode($string, $attr, $content = null) {
     extract(shortcode_atts(array(
         'id'    => '',
@@ -23,7 +34,7 @@ function html5_img_caption_shortcode($string, $attr, $content = null) {
 	
 	$inline_width = '';
 	if( $align === 'alignleft' || $align === 'alignright' ) {
-		$inline_width = 'style="width: '. (10 + (int) $width) . 'px"';
+		//$inline_width = 'style="width: '. (10 + (int) $width) . 'px"';
 	}
 	$class.= ' wp-caption ' . esc_attr($align);
 	
