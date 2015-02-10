@@ -10,6 +10,6 @@
 	?>
 	</div>
 	
-	<nav><?php echo get_next_posts_link('More');?> </nav>
+	<nav><?php echo get_next_posts_link('More');?></nav>
 
 <?php get_footer(); ?>
