@@ -8,7 +8,9 @@
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width">
+<?php if( $post ) { ?>
 <meta name="date" content="<?= date('Ymd',strtotime($post->post_date)); ?>">
+<?php } ?>
 
 <link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>">
 <link rel="apple-touch-icon" sizes="57x57" href="<?php echo content_url();?>/themes/zadie-heimlich/favicons/apple-touch-icon-57x57.png">
