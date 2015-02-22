@@ -10,6 +10,9 @@
 				$attachment_type = $pieces[0];
 			}
 			?>
+			
+			<?php do_action( 'zah_attachment_before_article', $post ); ?>
+			
 			<article class="attachment-<?php echo $attachment_type; ?>">
 				
 				<?php do_action( 'zah_attachment_before_template_part', $post ); ?>

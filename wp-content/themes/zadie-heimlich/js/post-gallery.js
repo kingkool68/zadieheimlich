@@ -2,16 +2,15 @@ jQuery(document).ready(function($) {
 	var regex = /(.+\/)gallery\/(.+)\//gi;
 	var parts = regex.exec(window.location.href);
 	
-	/* 
-	if( window.location.hash[1] == '/' && window.location.hash.length > 2 ) {
-		var new_post_name = window.location.hash.replace(/#\//i, '');
-		window.location = parts[1] + '/' + new_post_name + '/';
+	// Simple feature detection for History Management (borrowed from Modernizr)
+	function supportsHistory() {
+		return !!(window.history && history.pushState);
 	}
-	*/
 	 
 	$.gallery = {
 		url: parts[1],
 		post_name: parts[2],
+		posts: [],
 		next: function() {
 			this.current = (this.current == this.max - 1) ? 0 : this.current + 1;
 			this.load();
@@ -49,7 +48,7 @@ jQuery(document).ready(function($) {
 			for( i=this.current; i<this.max; i++ ) {
 				this.preload(i);
 			}
-			//Now we can start from the beginning and preload upto the current image.
+			//Now we can start from the beginning and preload up to the current image.
 			for ( i=0; i<this.current; i++) {
 				this.preload(i);
 			}
@@ -62,7 +61,7 @@ jQuery(document).ready(function($) {
 			if( !post.html ) {
 				//Fetch the HTML and preload it.
 				$.ajax({
-					url: post.post_url,
+					url: post.url,
 					dataType: 'html',
 					success: $.gallery.ajaxCallback(i)
 				});
@@ -88,44 +87,56 @@ jQuery(document).ready(function($) {
 			if( !post || !post.html ) {
 				return false;
 			}
-			 
+			
 			$('#content').html( post.html );
-			 
-			var hash = '/';
-			if( post.post_name != this.post_name ) {
-				hash += post.post_name;
+			document.title = post.title;
+			
+			if( supportsHistory() ) {
+				newPath = this.url + 'gallery/' + post.slug + '/';
+				window.history.replaceState(null, null, newPath);
 			}
-			window.location.hash = hash;
 		}
 	}
 	 
-	console.log( $.gallery );
-	
-	/*
-	$.ajax({
-		url: $.gallery.url + '/json/',
-		success: function(data) {
-			$.gallery.posts = data.posts;
-			for( var i = 0; i < data.posts.length; i++ ) {
-				if(data.posts[i].post_name == $.gallery.post_name) {
-					$.gallery.current = i;
-					$.gallery.max = data.posts.length;
-					break;
-				}
-			}
-			document.title = data.gallery_title + ' Photos';
-			$.gallery.preloadTheNext(5);
-			$.gallery.preloadThePrevious(3);
-		}
-	});
-	*/
+	post_gallery_urls = $('#post-gallery-urls').val().split(' ');
+	if( !post_gallery_urls ) {
+		return false;
+	}
 	 
-	$('#content nav').on('click', '.next', function(e) {
+	$.gallery.posts = [];
+	for( var i = 0; i < post_gallery_urls.length; i++ ) {
+		var post_gallery_url = post_gallery_urls[i];
+		
+		var pieces = regex.exec(post_gallery_url);
+		if( !pieces ) {
+			var pieces = regex.exec(post_gallery_url);
+		}
+		var post_name = pieces[2];
+		
+		if(post_gallery_url == window.location) {
+			$.gallery.current = i;
+			$.gallery.max = post_gallery_urls.length;
+		}
+		
+		$.gallery.posts.push({
+			url: post_gallery_url,
+			slug: post_name,
+			loaded: false,
+			html: '',
+			title: ''
+		});
+	}
+	
+	$.gallery.preloadTheNext(5);
+	$.gallery.preloadThePrevious(3);
+	//$.gallery.preloadAll();
+	 
+	$('#content').on('click', 'nav .next', function(e) {
 		e.preventDefault();
 		$.gallery.next();
 		$.gallery.preloadTheNext(5);
-	});
-	$('#content nav').on('click', '.prev', function(e) {
+		
+	}).on('click', 'nav .prev', function(e) {
 		e.preventDefault();
 		$.gallery.previous();
 		$.gallery.preloadThePrevious(5);

@@ -56,6 +56,9 @@ function zah_post_gallery_pre_get_posts( $query ) {
 }
 add_action( 'pre_get_posts', 'zah_post_gallery_pre_get_posts' );
 
+
+
+
 /* Hooks & Filters */
 function zah_gallery_before_template_part( $post ) {
 	if( !is_post_gallery() ) {
@@ -80,7 +83,7 @@ function zah_gallery_after_article( $post ) {
 	$nav = zah_post_gallery_get_nav();
 	$parent_post = $nav->parent;
 	
-	//wp_enqueue_script( 'post-gallery' );
+	wp_enqueue_script( 'post-gallery' );
 ?>
 
 <nav>
@@ -88,12 +91,17 @@ function zah_gallery_after_article( $post ) {
 	<a href="<?php echo $nav->prev_permalink ?>" class="prev"><span class="arrow">&larr;</span> Prev</a>
 	<p class="progress"><?php echo $nav->current;?>/<?php echo $nav->total;?></p>
 </nav>
+
+<input type="hidden" id="post-gallery-urls" value="<?php esc_attr_e( implode(' ', $nav->attachments ) ); ?>">
 <?php
 }
+//add_action( 'zah_attachment_before_article', 'zah_gallery_after_article' );
 add_action( 'zah_attachment_after_article', 'zah_gallery_after_article' );
 
-/* Helper Functions */
 
+
+
+/* Helper Functions */
 function is_post_gallery() {
 	if( get_query_var( 'post_gallery' ) == '1' ) {
 		return true;
@@ -167,7 +175,8 @@ function zah_post_gallery_get_gallery_posts() {
 			'ID' => $post->ID,
 			'post_name' => $post->post_name,
 			'post_title' => $post->post_title,
-			'post_url' => get_permalink($post->ID)
+			'post_url' => get_permalink($post->ID),
+			'post_gallery_url' => zah_post_gallery_link($parent_post->ID, $post->post_name)
 		);
 	endforeach;
 	
@@ -187,6 +196,7 @@ function zah_post_gallery_get_nav() {
 		$count = 0;
 		$current = $next = $prev = 0;
 		$post_id = get_the_ID();
+		$attachments = array();
 		foreach( $posts->attachments as $attachment ) {
 			if( $attachment->ID == $post_id ) {
 				$current = $count;
@@ -198,8 +208,10 @@ function zah_post_gallery_get_nav() {
 				if( $next >= $total_attachments ) {
 					$next = 0;
 				}
-				break;
 			}
+			
+			$attachments[] = $attachment->post_gallery_url;
+			
 			$count++;
 		}
 		
@@ -210,9 +222,10 @@ function zah_post_gallery_get_nav() {
 		$prev_slug = $posts->attachments[ $prev ]->post_name;
 		
 		$output = (object) array(
+			'attachments' => $attachments,
 			'parent' => get_post( $posts->parent_id ),
-			'next_permalink' => $parent_permalink . 'gallery/' . $next_slug . '/',
-			'prev_permalink' => $parent_permalink . 'gallery/' . $prev_slug . '/',
+			'next_permalink' => zah_post_gallery_link($posts->parent_id, $next_slug),
+			'prev_permalink' => zah_post_gallery_link($posts->parent_id, $prev_slug),
 			'total' => $total_attachments,
 			'current' => $current + 1
 		);
