@@ -10,6 +10,10 @@
 	?>
 	</div>
 	
-	<nav><?php echo get_next_posts_link('More');?></nav>
+	<?php 
+	if( $next_page_link = get_next_posts_link('More') ) {
+		echo '<nav>' . $next_page_link . '</nav>';
+	}
+	?>
 
 <?php get_footer(); ?>
