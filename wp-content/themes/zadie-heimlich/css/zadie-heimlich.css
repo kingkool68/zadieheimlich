@@ -156,15 +156,24 @@ clear:both;
 .gallery {
 overflow:auto;
 height:100%;
+padding-left:2.5em;
+margin-bottom:1em;
+}
+.gallery-size-thumbnail {
+max-width:68em;
 }
 .gallery a {
-float:left;
-padding:1em 0;
+border-bottom:0 none;
 }
 .gallery img {
-display:block;
-margin:0 auto;
+float:left;
+margin:1em;
 }
+.gallery a:hover img,
+.gallery a:focus img {
+border-color:#F8B1FA
+}
+/*
 .gallery-2-column a {
 width:50%;
 }
@@ -192,6 +201,7 @@ width:11.11111%;
 .gallery-10-column a {
 width:10%;
 }
+*/
 
 /* Override the video player color defaults */
 article.instagram .mejs-controls .mejs-time-rail .mejs-time-current {
@@ -241,7 +251,7 @@ font-family: 'Crete Round', Arial, Helvetica, sans-serif;
 .holder {
 margin:0 auto;
 max-width:105em;
-padding:0 2em;
+padding:0 2em 5em;
 color:#fff;
 }
 
@@ -340,6 +350,39 @@ background-color:#B47FB6;
 color:#fff;
 }
 
+
+/* Attachment pages */
+.attachment article {
+padding-bottom:1em;
+}
+.attachment .parent-post {
+padding-bottom:0.8em;
+}
+.attachment article .title {
+text-align:center;
+}
+.attachment article .container {
+margin:0 auto;
+}
+article.attachment-image p {
+font-size:1.5em;
+}
+article.attachment-image img {
+margin:2.5em auto 1.5em;
+display:block;
+border-width:0.6em;
+}
+.attachment nav .next {
+float:right;
+}
+.attachment nav .prev {
+float:left;
+}
+.attachment .progress {
+text-align:center;
+padding-top:0.3em;
+}
+
 @media (max-width:62.5em) { /* 1000px / 16 */
 	header {
 	font-size:80%;
@@ -360,7 +403,8 @@ color:#fff;
 
 @media (max-width:47.5em) { /* 760px / 16 */
 	article.post .inner p,
-	article.page .inner p {
+	article.page .inner p,
+	.gallery {
 	padding-left:0;
 	}
 }

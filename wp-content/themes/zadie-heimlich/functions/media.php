@@ -67,9 +67,9 @@ function zah_attachment_link( $link, $post_id ) {
 add_filter( 'attachment_link', 'zah_attachment_link', 2, 10 );
 
 
-function zah_post_gallery( $attr ) {
+function zah_post_gallery( $nothing, $attr ) {
 	$post = get_post();
-
+	
 	static $instance = 0;
 	$instance++;
 
@@ -91,22 +91,42 @@ function zah_post_gallery( $attr ) {
 		'exclude'    => '',
 		'link'       => ''
 	), $attr, 'gallery' );
-	
-	var_dump( $atts['size'] );
 
 	$id = intval( $atts['id'] );
 
 	if ( ! empty( $atts['include'] ) ) {
-		$_attachments = get_posts( array( 'include' => $atts['include'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+		$_attachments = get_posts( array( 
+			'include' => $atts['include'],
+			'post_status' => 'inherit',
+			'post_type' => 'attachment',
+			'post_mime_type' => 'image',
+			'order' => $atts['order'],
+			'orderby' => $atts['orderby']
+		) );
 
 		$attachments = array();
 		foreach ( $_attachments as $key => $val ) {
 			$attachments[$val->ID] = $_attachments[$key];
 		}
 	} elseif ( ! empty( $atts['exclude'] ) ) {
-		$attachments = get_children( array( 'post_parent' => $id, 'exclude' => $atts['exclude'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+		$attachments = get_children( array(
+			'post_parent' => $id,
+			'exclude' => $atts['exclude'],
+			'post_status' => 'inherit',
+			'post_type' => 'attachment',
+			'post_mime_type' => 'image',
+			'order' => $atts['order'],
+			'orderby' => $atts['orderby']
+		) );
 	} else {
-		$attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+		$attachments = get_children( array(
+			'post_parent' => $id,
+			'post_status' => 'inherit',
+			'post_type' => 'attachment',
+			'post_mime_type' => 'image',
+			'order' => $atts['order'],
+			'orderby' => $atts['orderby']
+		) );
 	}
 
 	if ( empty( $attachments ) ) {
@@ -116,46 +136,68 @@ function zah_post_gallery( $attr ) {
 	if ( is_feed() ) {
 		$output = "\n";
 		foreach ( $attachments as $att_id => $attachment ) {
-			$output .= wp_get_attachment_link( $att_id, $atts['size'], true ) . "\n";
+			$output .= zah_get_attachment_link( $att_id, $atts['size'], true ) . "\n";
 		}
 		return $output;
 	}
 
 	$columns = intval( $atts['columns'] );
+	$img_size = $atts['size'];
 	$itemwidth = $columns > 0 ? floor(100/$columns) : 100;
 
 
 	$size_class = sanitize_html_class( $atts['size'] );
 	
-	$output = "<section class=\"gallery gallery-{$columns}-column\">";
+	$output = "<section class=\"gallery gallery-{$columns}-column gallery-size-{$img_size}\">";
 
 	$i = 0;
 	foreach ( $attachments as $id => $attachment ) {
-
-		$attr = ( trim( $attachment->post_excerpt ) ) ? array( 'aria-describedby' => "selector-$id" ) : '';
+		
+		$attr = array( 'class' => 'attachment-' . $atts['size'] );
+		if( trim( $attachment->post_excerpt ) ) {
+			$attr['aria-describedby'] = "selector-$id";
+		}
+		
+		$image_meta  = wp_get_attachment_metadata( $id );
+		$img_width = $image_meta['width'];
+		$img_height = $image_meta['height'];
+		if( isset( $image_meta['sizes'][ $atts['size'] ] ) ) {
+			$img_width = $image_meta['sizes'][ $atts['size'] ]['width'];
+			$img_height = $image_meta['sizes'][ $atts['size'] ]['height'];
+		}
+		$orientation = '';
+		if ( isset( $img_height, $img_width ) ) {
+			$orientation = ( $img_height > $img_width ) ? 'portrait' : 'landscape';
+			if( $img_height == $img_width ) {
+				$orientation = 'square';
+			}
+		}
+		
+		$attr['class'] .= ' ' . $orientation;
+		
+		if( $i % $columns == 0 ) {
+			$attr['class'] .= ' end';
+		}
+		
 		if ( ! empty( $atts['link'] ) && 'file' === $atts['link'] ) {
-			$image_output = wp_get_attachment_link( $id, $atts['size'], false, false, false, $attr );
+			$image_output = zah_get_attachment_link( $id, $atts['size'], false, false, false, $attr );
 		} elseif ( ! empty( $atts['link'] ) && 'none' === $atts['link'] ) {
 			$image_output = wp_get_attachment_image( $id, $atts['size'], false, $attr );
 		} else {
-			$image_output = wp_get_attachment_link( $id, $atts['size'], true, false, false, $attr );
+			$image_output = zah_get_attachment_link( $id, $atts['size'], true, false, false, $attr );
 		}
-		$image_meta  = wp_get_attachment_metadata( $id );
-
-		$orientation = '';
-		if ( isset( $image_meta['height'], $image_meta['width'] ) ) {
-			$orientation = ( $image_meta['height'] > $image_meta['width'] ) ? 'portrait' : 'landscape';
-		}
+		
 		$output .= "$image_output";
+		$i++;
 	}
 	
 	$output .= '</section>';
 	
 	return $output;
 }
+add_filter( 'post_gallery', 'zah_post_gallery', 10, 2 );
 
-add_filter( 'post_gallery', 'zah_post_gallery' );
-
+/* Helpers */
 //media_sideload_image() would be so much better if it simply returned the attachment ID instead of HTML
 function media_sideload_image_return_id( $file, $post_id, $desc = null, $post_data = array() ) {
 	if ( ! empty( $file ) ) {
@@ -188,4 +230,43 @@ function media_sideload_image_return_id( $file, $post_id, $desc = null, $post_da
 
 		return $id;
 	}
+}
+
+function zah_get_attachment_link( $id = 0, $size = 'thumbnail', $permalink = false, $icon = false, $text = false, $attr = '' ) {
+	$id = intval( $id );
+	$_post = get_post( $id );
+	$parent_post = get_post();
+
+	if ( empty( $_post ) || ( 'attachment' != $_post->post_type ) || ! $url = wp_get_attachment_url( $_post->ID ) )
+		return __( 'Missing Attachment' );
+
+	if ( $permalink ) {
+		//$url = get_attachment_link( $_post->ID );
+		$url = zah_post_gallery_link( $parent_post->ID, $_post->post_name );
+	}
+
+	if ( $text ) {
+		$link_text = $text;
+	} elseif ( $size && 'none' != $size ) {
+		$link_text = wp_get_attachment_image( $id, $size, $icon, $attr );
+	} else {
+		$link_text = '';
+	}
+
+	if ( trim( $link_text ) == '' )
+		$link_text = $_post->post_title;
+
+	/**
+	 * Filter a retrieved attachment page link.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param string      $link_html The page link HTML output.
+	 * @param int         $id        Post ID.
+	 * @param string      $size      Image size. Default 'thumbnail'.
+	 * @param bool        $permalink Whether to add permalink to image. Default false.
+	 * @param bool        $icon      Whether to include an icon. Default false.
+	 * @param string|bool $text      If string, will be link text. Default false.
+	 */
+	return apply_filters( 'wp_get_attachment_link', "<a href='$url'>$link_text</a>", $id, $size, $permalink, $icon, $text );
 }

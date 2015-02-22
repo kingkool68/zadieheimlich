@@ -18,11 +18,12 @@ add_action('wp_before_admin_bar_render', 'remove_wp_menu_from_admin_bar', 0);
 //CSS & JS
 function zah_wp_enqueue_scripts() {
 	wp_register_style( 'zah-google-fonts', 'http://fonts.googleapis.com/css?family=Crete+Round:400,400italic|Open+Sans:300italic,700italic,300,700', array(), NULL, 'all' );
-	wp_register_style( 'crete-round-google-font', 'http://fonts.googleapis.com/css?family=Crete+Round:400,400italic', array(), NULL, 'all' );
 	wp_register_style( 'reset', get_stylesheet_directory_uri() . '/css/reset.css', array(), NULL, 'all' );
 	wp_register_style( 'zadie-heimlich', get_stylesheet_directory_uri() . '/css/zadie-heimlich.css', array('zah-google-fonts', 'reset'), NULL, 'all' );
 	
 	wp_enqueue_style( 'zadie-heimlich' );
+	
+	wp_register_script( 'post-gallery', get_template_directory_uri() . '/js/post-gallery.js', array('jquery'), NULL, true );
 }
 add_action( 'wp_enqueue_scripts', 'zah_wp_enqueue_scripts' );
 
@@ -45,4 +46,6 @@ function zah_content_footer( $post ) {
 
 include 'functions/dates.php';
 include 'functions/media.php';
+include 'functions/post-galleries.php';
+//include 'functions/tiled-gallery.php';
 include 'functions/instagram.php';
