@@ -7,7 +7,6 @@ function zah_post_gallery_generate_rewrite_rules($wp_rewrite) {
 	);
 	
 	$wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
-
 }
 add_filter('generate_rewrite_rules', 'zah_post_gallery_generate_rewrite_rules');
 
@@ -17,6 +16,20 @@ function zah_post_gallery_query_vars( $query_vars ) {
 	return $query_vars;
 }
 add_filter('query_vars', 'zah_post_gallery_query_vars' );
+
+// URLs like /category/gallery/ wouldn't work because our rewrite rules tell WordPress this is a post_gallery when it is really not intended that way. This function sets everything right. Sort of.
+function zah_post_gallery_parse_request( $query ) {
+	if( !isset( $query->query_vars['name'] ) ) {
+		return;
+	}
+	
+	if( $query->query_vars['name'] == 'category' ) {
+		$query->query_vars['name'] = '';
+		$query->query_vars['post_gallery'] = '';
+		$query->query_vars['category_name'] = 'gallery';
+	}
+}	
+add_action( 'parse_request', 'zah_post_gallery_parse_request' );
 
 function zah_post_gallery_redirect_canonical($redirect_url, $requested_url) {
 	if( is_post_gallery() ) {
