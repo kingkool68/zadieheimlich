@@ -6,10 +6,32 @@ jQuery(document).ready(function($) {
 	function supportsHistory() {
 		return !!(window.history && history.pushState);
 	}
+	
+	function calculateImageSize() {
+		var winWidth = $(window).width();
+		var imageSizes = [
+			{ size: '320-wide', width: 320 },
+			{ size: '360-wide', width: 360 },
+			{ size: '480-wide', width: 480 },
+			{ size: '640-wide', width: 640 },
+			{ size: '800-wide', width: 800 }
+			//{ size: 'large', width: 1024 }
+		];
+		
+		for( i=0; i<imageSizes.length; i++ ) {
+			img = imageSizes[i];
+			if( winWidth <= img.width ) {
+				return img.size;
+				break;
+			} 
+		}
+		
+		return '';
+	}
 	 
 	$.gallery = {
 		url: parts[1],
-		post_name: parts[2],
+		postName: parts[2],
 		posts: [],
 		next: function() {
 			this.current = (this.current == this.max - 1) ? 0 : this.current + 1;
@@ -61,7 +83,7 @@ jQuery(document).ready(function($) {
 			if( !post.html ) {
 				//Fetch the HTML and preload it.
 				$.ajax({
-					url: post.url,
+					url: post.urlToFetch,
 					dataType: 'html',
 					success: $.gallery.ajaxCallback(i)
 				});
@@ -97,30 +119,37 @@ jQuery(document).ready(function($) {
 			}
 		}
 	}
-	 
-	post_gallery_urls = $('#post-gallery-urls').val().split(' ');
-	if( !post_gallery_urls ) {
+	
+	var imgSize = calculateImageSize();
+	postGalleryUrls = $('#post-gallery-urls').val().split(' ');
+	if( !postGalleryUrls ) {
 		return false;
 	}
 	 
 	$.gallery.posts = [];
-	for( var i = 0; i < post_gallery_urls.length; i++ ) {
-		var post_gallery_url = post_gallery_urls[i];
+	for( var i = 0; i < postGalleryUrls.length; i++ ) {
+		var postGalleryUrl = postGalleryUrls[i];
 		
-		var pieces = regex.exec(post_gallery_url);
+		var pieces = regex.exec(postGalleryUrl);
 		if( !pieces ) {
-			var pieces = regex.exec(post_gallery_url);
+			var pieces = regex.exec(postGalleryUrl);
 		}
-		var post_name = pieces[2];
+		var postName = pieces[2];
 		
-		if(post_gallery_url == window.location) {
+		if(postGalleryUrl == window.location) {
 			$.gallery.current = i;
-			$.gallery.max = post_gallery_urls.length;
+			$.gallery.max = postGalleryUrls.length;
+		}
+		
+		urlToFetch = postGalleryUrl;
+		if( imgSize ) {
+			urlToFetch += 'size/' + imgSize + '/';
 		}
 		
 		$.gallery.posts.push({
-			url: post_gallery_url,
-			slug: post_name,
+			url:  postGalleryUrl,
+			urlToFetch: urlToFetch, 
+			slug: postName,
 			loaded: false,
 			html: '',
 			title: ''

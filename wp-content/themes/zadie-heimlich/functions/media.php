@@ -1,6 +1,10 @@
 <?php
 //Custom image sizes
-add_image_size( '350-wide', 350 );
+add_image_size( '320-wide', 320 );
+add_image_size( '360-wide', 360 );
+add_image_size( '480-wide', 480 );
+add_image_size( '640-wide', 640 );
+add_image_size( '800-wide', 800 );
 
 function zah_image_size_names_choose($sizes) {
 	$addsizes = array(

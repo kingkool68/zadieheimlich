@@ -6,7 +6,10 @@
 			
 			<h1 class="title" title="<?php esc_attr_e( how_old_was_zadie() ); ?>"><?php the_title(); ?></h1>
 			<?php
-				$attachment_size = 'large';
+				$attachment_size = get_query_var('size');
+				if( !$attachment_size || in_array( $attachment_size, array('full', 'original') ) ) {
+					$attachment_size = 'large';
+				}
 				$img = wp_get_attachment_image_src( get_the_ID(), $attachment_size );
 				
 				//Figure out the max-width in ems so things scale when the default font-size changes

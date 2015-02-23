@@ -1,6 +1,7 @@
 <?php
 function zah_post_gallery_generate_rewrite_rules($wp_rewrite) {
 	$new_rules = array(
+		'([^/]+)/gallery/([^/]+)?/size/([^/]+)/?' => 'index.php?name=$matches[1]&post_gallery=1&attachment=$matches[2]&size=$matches[3]',
 		'([^/]+)/gallery/([^/]+)?/?' => 'index.php?name=$matches[1]&post_gallery=1&attachment=$matches[2]',
 		'([^/]+)/gallery/?$' => 'index.php?name=$matches[1]&post_gallery=1&attachment='
 	);
@@ -12,6 +13,7 @@ add_filter('generate_rewrite_rules', 'zah_post_gallery_generate_rewrite_rules');
 
 function zah_post_gallery_query_vars( $query_vars ) {
 	$query_vars[] = 'post_gallery';
+	$query_vars[] = 'size';
 	return $query_vars;
 }
 add_filter('query_vars', 'zah_post_gallery_query_vars' );
