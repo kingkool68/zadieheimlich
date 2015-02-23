@@ -452,3 +452,12 @@ padding-top:0.3em;
 	padding-bottom:0.5em;
 	}
 }
+
+@media (max-width:25em) {
+	.gallery-size-thumbnail img { /* 400px / 16 */
+	float:none;
+	margin-left:auto;
+	margin-right:auto;
+	display:block;
+	}
+}
