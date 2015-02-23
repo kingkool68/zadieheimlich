@@ -100,7 +100,23 @@ function zah_gallery_after_article( $post ) {
 //add_action( 'zah_attachment_before_article', 'zah_gallery_after_article' );
 add_action( 'zah_attachment_after_article', 'zah_gallery_after_article' );
 
+//Add noindex to pages that have the size query var added
+function zah_post_gallery_wpseo_head($thing1) {
+	if( is_post_gallery() && get_query_var('size') )
+	echo '<meta name="robots" content="noindex">' . "\n";
+}
+add_action( 'wpseo_head', 'zah_post_gallery_wpseo_head' );
 
+function zah_post_gallery_canonical( $canonical ) {
+	global $post;
+	if( is_post_gallery() ) {
+		$nav = zah_post_gallery_get_nav();
+		//pre_dump( $nav );
+		return zah_post_gallery_link( $nav->parent->ID, $post->post_name );
+	}
+	return $canonical;
+}
+add_filter( 'wpseo_canonical', 'zah_post_gallery_canonical' );
 
 
 /* Helper Functions */
