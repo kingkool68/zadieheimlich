@@ -107,6 +107,24 @@ function zah_post_gallery_wpseo_head($thing1) {
 }
 add_action( 'wpseo_head', 'zah_post_gallery_wpseo_head' );
 
+function zah_post_gallery_opengraph_type( $type ) {
+	if( wp_attachment_is_image() ) {
+		return 'image';
+	}
+	return $type;
+}
+//add_filter( 'wpseo_opengraph_type', 'zah_post_gallery_opengraph_type' );
+
+function zah_post_gallery_opengraph_image( $src ) {
+	if( wp_attachment_is_image() ) {
+		$img = wp_get_attachment_image_src( get_the_ID(), 'large' );
+		$src = $img[0];
+	}
+	
+	return $src;
+}
+//add_filter( 'wpseo_opengraph_image', 'zah_post_gallery_opengraph_image' );
+
 function zah_post_gallery_canonical( $canonical ) {
 	global $post;
 	if( is_post_gallery() ) {
