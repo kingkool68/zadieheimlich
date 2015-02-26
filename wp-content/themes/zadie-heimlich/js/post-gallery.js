@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-	var regex = /(.+\/)gallery\/(.+)\//gi;
+	var regex = /(.+\/)gallery\/([^\/]+)\//gi;
 	var parts = regex.exec(window.location.href);
 	
 	// Simple feature detection for History Management (borrowed from Modernizr)
@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 		preloadTheNext: function(count) {
 			var start = this.current;
 			var end = this.current + count;
-			 
+			
 			for( var i = start; i < end; i++ ) {
 				var index = i;
 				if( index > this.max - 1 ) {
@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
 	if( !postGalleryUrls ) {
 		return false;
 	}
-	 
+	
 	$.gallery.posts = [];
 	for( var i = 0; i < postGalleryUrls.length; i++ ) {
 		var postGalleryUrl = postGalleryUrls[i];
@@ -136,7 +136,7 @@ jQuery(document).ready(function($) {
 		}
 		var postName = pieces[2];
 		
-		if(postGalleryUrl == window.location) {
+		if(postGalleryUrl == parts[0]) {
 			$.gallery.current = i;
 			$.gallery.max = postGalleryUrls.length;
 		}
