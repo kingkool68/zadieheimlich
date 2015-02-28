@@ -461,8 +461,6 @@ class ZAH_Instagram {
 	
 	public function insert_instagram_post( $img ) {
 		if( !function_exists('download_url') ) {
-			//require_once ABSPATH . 'wp-admin/includes/file.php';
-			//media_handle_sideload()
 			require_once ABSPATH . 'wp-admin/includes/admin.php';
 		}
 		
@@ -579,7 +577,10 @@ class ZAH_Instagram {
 	public function does_instagram_permalink_exist( $permalink ) {
 		global $wpdb;
 		
-		$query = "SELECT `ID` FROM `" . $wpdb->posts . "` WHERE `guid` = '" . $permalink . "' LIMIT 0,1;";
+		$parts = parse_url( $permalink );
+		$id = $parts['path'];
+		
+		$query = "SELECT `ID` FROM `" . $wpdb->posts . "` WHERE `guid` =  LIKE '%" . $id . "%' LIMIT 0,1;";
 		return $wpdb->get_var( $query );
 	}
 	
