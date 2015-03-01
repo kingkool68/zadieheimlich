@@ -580,7 +580,7 @@ class ZAH_Instagram {
 		$parts = parse_url( $permalink );
 		$id = $parts['path'];
 		
-		$query = "SELECT `ID` FROM `" . $wpdb->posts . "` WHERE `guid` =  LIKE '%" . $id . "%' LIMIT 0,1;";
+		$query = "SELECT `ID` FROM `" . $wpdb->posts . "` WHERE `guid` LIKE '%" . $id . "%' LIMIT 0,1;";
 		return $wpdb->get_var( $query );
 	}
 	
