@@ -173,35 +173,6 @@ margin:1em;
 .gallery a:focus img {
 border-color:#F8B1FA
 }
-/*
-.gallery-2-column a {
-width:50%;
-}
-.gallery-3-column a {
-width:33.3333%;
-}
-.gallery-4-column a {
-width:33.3333%;
-}
-.gallery-5-column a {
-width:33.3333%;
-}
-.gallery-6-column a {
-width:33.3333%;
-}
-.gallery-7-column a {
-width:33.3333%;
-}
-.gallery-8-column a {
-width:12.5%;
-}
-.gallery-9-column a {
-width:11.11111%;
-}
-.gallery-10-column a {
-width:10%;
-}
-*/
 
 /* Override the video player color defaults */
 article.instagram .mejs-controls .mejs-time-rail .mejs-time-current {
