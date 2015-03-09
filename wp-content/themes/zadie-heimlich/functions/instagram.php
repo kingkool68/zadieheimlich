@@ -2,7 +2,7 @@
 
 class ZAH_Instagram {
 	
-	var $whitelisted_usernames = array( 'naudebynature', 'kingkool68' );
+	var $whitelisted_usernames = array( 'naudebynature', 'kingkool68', 'lilzadiebug' );
 	
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
