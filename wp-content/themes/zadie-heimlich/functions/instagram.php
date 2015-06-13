@@ -70,13 +70,19 @@ class ZAH_Instagram {
 		<?php
 		//MANUAL SYNC
 		if( isset( $action ) && $action == 'manual-sync' ) {
+
 			$date_limit = 0;
+			$from_date = '';
 			if( isset( $_POST['date-limit'] ) ) {
 				$date_limit = strtotime( $_POST['date-limit'] );
+				$from_date = date( get_option( 'date_format' ), $date_limit );
 			}
 		?>
 			<div class="wrap">
 				<h1>Manaul Sync</h1>
+				<?php if( $from_date ): ?>
+					<p>From <strong><?php echo $from_date; ?></strong> until now.</p>
+				<?php endif; ?>
 				<div id="results">
 				
 				</div>
@@ -111,6 +117,8 @@ class ZAH_Instagram {
 								'date-limit': dateLimit,
 								'next_max_id': next_max_id
 							});
+						} else {
+							$('#stats').after('<p>All done :-)</p>');
 						}
 					});
 				}
