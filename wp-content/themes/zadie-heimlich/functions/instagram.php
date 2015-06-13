@@ -15,6 +15,8 @@ class ZAH_Instagram {
 		
 		add_filter( 'the_content', array($this, 'the_content') );
 		add_filter( 'manage_instagram_posts_columns', array($this, 'manage_instagram_posts_columns') );
+
+		add_action('wp_dashboard_setup', array($this, 'wp_dashboard_setup') );
 	}
 	
 	function init() {
@@ -428,6 +430,23 @@ class ZAH_Instagram {
 			break;
 		}
 	}
+
+
+	/* Quick Sync Dashboard Widget */
+	function wp_dashboard_setup() {
+		wp_add_dashboard_widget('instagram-quick-sync', 'Instagram Quick Sync', array($this, 'quick_sync_dashboard_widget') );
+	}
+
+	function quick_sync_dashboard_widget() {
+		$two_days_ago = date( 'Y-m-d', strtotime('-2 days') );
+		?>
+		<form action="<?php echo admin_url( 'edit.php?post_type=instagram&page=zah-instagram-sync&action=manual-sync' );?>" method="post">
+			<input type="hidden" name="date-limit" value="<?php echo $two_days_ago; ?>">
+			<input type="submit" class="button button-primary" value="Sync Last 48 Hours">
+		</form>
+		<?php
+	}
+
 
 
 	/* Helper Functions */
