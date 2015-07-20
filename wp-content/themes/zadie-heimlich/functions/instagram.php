@@ -356,8 +356,8 @@ class ZAH_Instagram {
 	function the_content( $content ) {
 		$post = get_post();
 		if ( $post->post_type == 'instagram' ) {
-			$content = preg_replace( '/\s(#(\w+))/im', ' <a href="http://iconosquare.com/tag/$2/">$1</a>', $content );
-			// $content = preg_replace('/^(#(\w+))/im', '<a href="http://iconosquare.com/tag/$2/">$1</a>', $content);
+			$content = preg_replace( '/\s(#(\w+))/im', ' <a href="https://instagram.com/explore/tags/zadiealyssa/$2/">$1</a>', $content );
+			// $content = preg_replace('/^(#(\w+))/im', '<a href="https://instagram.com/explore/tags/zadiealyssa/$2/">$1</a>', $content);
 			$content = preg_replace( '/\s(@(\w+))/im', ' <a href="http://instagram.com/$2">$1</a>', $content );
 			// $content = preg_replace('/^(@(\w+))/im', '<a href="http://instagram.com/$2">$1</a>', $content);
 			// $via = ' via <a href="' . $permalink . '" target="_blank">' . $username . '</a>';
