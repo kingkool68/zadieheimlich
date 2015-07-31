@@ -395,7 +395,7 @@ class ZAH_Instagram {
 			'instagram_photo' => 'Photo',
 			'instagram_permalink' => 'Instagram Permalink',
 		);
-		$remove_columns = array( 'cb', 'title', 'categories', 'tags' );
+		$remove_columns = array( 'cb', 'title', 'categories' );
 		foreach ( $remove_columns as $col ) {
 			unset( $columns[ $col ] );
 		}
