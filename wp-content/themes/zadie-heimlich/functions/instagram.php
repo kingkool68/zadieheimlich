@@ -300,6 +300,9 @@ class ZAH_Instagram {
 
 			$type = $_POST['subscription-type'];
 			$object_id = intval( $_POST['object-id'] );
+			if ( $type == 'tag' ) {
+				$object_id = sanitize_title( $_POST['object-id'] );
+			}
 
 			$response = wp_remote_post( 'https://api.instagram.com/v1/subscriptions/', array(
 				'headers' => array(),
