@@ -188,6 +188,7 @@ background-attachment:fixed;
 padding:2em 4em 1.5em;
 overflow:auto;
 height:100%;
+position:relative;
 }
 header .site-title {
 margin-top:0;
@@ -224,7 +225,109 @@ margin:0 auto;
 max-width:105em;
 padding:0 2em 5em;
 color:#fff;
+z-index:1;
 }
+
+
+/* Menu */
+header .menu {
+position: absolute;
+right: 2.8em;
+font-size: 1.6em;
+text-decoration:none;
+width:7em;
+
+display: block;
+border: 0.15em solid #BB85BD;
+border-radius: 0.7em;
+color: #BB85BD;
+text-align: center;
+padding:0.5em 0;
+}
+header .menu:hover,
+header .menu:active {
+background-color: #B47FB6;
+background-color: rgba(180,127,182, 0.5);
+color:#9B3F9E;
+}
+
+.js .holder,
+.js header .menu,
+.js #menu {
+-webkit-transition: all 0.5s ease;
+-moz-transition: all 0.5s ease;
+-o-transition: all 0.5s ease;
+transition: all 0.35s ease;
+
+-webkit-transform: translate3d(0, 0, 0);
+-moz-transform: translate3d(0, 0, 0);
+-ms-transform: translate3d(0, 0, 0);
+-o-transform: translate3d(0, 0, 0);
+transform: translate3d(0, 0, 0);
+
+-webkit-backface-visibility: hidden;
+-moz-backface-visibility: hidden;
+-ms-backface-visibility: hidden;
+-o-backface-visibility: hidden;
+backface-visibility: hidden;
+}
+.nav-open #magic-shield {
+position:absolute;
+top:0;
+right:0;
+bottom:0;
+left:0;
+z-index:99;
+}
+.nav-open .holder {
+-webkit-transform: translate3d(-30em, 0, 0);
+-moz-transform: translate3d(-30em, 0, 0);
+-ms-transform: translate3d(-30em, 0, 0);
+-o-transform: translate3d(-30em, 0, 0);
+transform: translate3d(-30em, 0, 0);
+}
+.nav-open .holder {
+opacity:0.3;
+}
+.js #menu {
+bottom: auto;
+z-index: 0;
+width: 28em;
+position: absolute;
+top: 11em;
+right:1em;
+opacity:0;
+padding-top:3em;
+padding-left:2em;
+}
+.nav-open #menu {
+opacity:1;
+position:fixed;
+}
+nav section {
+font-family: Helvetica,Arial,sans-serif;
+font-weight:100;
+margin-bottom:4em;
+}
+nav ul {
+padding-left:0;
+}
+nav li {
+list-style:none;
+line-height:1.25;
+font-size:1.6em;
+}
+nav li a {
+display:block;
+padding:0.5em 0;
+}
+nav h2 {
+font-size:1.4em;
+font-weight:700;
+text-transform:uppercase;
+margin:0;
+}
+
 
 
 /* Article */

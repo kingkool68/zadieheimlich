@@ -40,6 +40,7 @@
 	<header>
 		<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
 		<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
+		<!-- a href="#menu" class="menu">Menu</a -->
 	</header>
-	
+
 	<div class="holder">
