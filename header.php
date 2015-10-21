@@ -7,7 +7,7 @@
 <head profile="http://gmpg.org/xfn/11" prefix="og: http://ogp.me/ns#">
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <?php if( $post ) { ?>
 <meta name="date" content="<?= date('Ymd',strtotime($post->post_date)); ?>">
 <?php } ?>
@@ -40,7 +40,7 @@
 	<header>
 		<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
 		<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
-		<!-- a href="#menu" class="menu">Menu</a -->
+		<a href="#menu" class="menu">Menu</a>
 	</header>
 
 	<div class="holder">
