@@ -46,6 +46,6 @@ function zah_content_footer( $post ) {
 
 include 'functions/dates.php';
 include 'functions/media.php';
-// include 'functions/menu.php';
+include 'functions/menu.php';
 include 'functions/post-galleries.php';
 include 'functions/instagram.php';
