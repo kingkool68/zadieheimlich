@@ -248,22 +248,6 @@ background-color: rgba(180,127,182, 0.5);
 color:#9B3F9E;
 }
 
-#menu .close {
-display:none;
-font-size:2em;
-border-bottom:0 none;
-margin-bottom: 1em;
-}
-.js #menu .close {
-display:block;
-}
-.js #menu .title {
-display: none;
-}
-.js #menu .alt-text {
-visibility: hidden;
-}
-
 .js .holder,
 .js header .menu,
 .js #magic-shield,
@@ -285,18 +269,10 @@ transform: translate3d(0, 0, 0);
 -o-backface-visibility: hidden;
 backface-visibility: hidden;
 }
-#magic-shield {
-background-color:rgba(255, 255, 255, 0);
-position:fixed;
-top:0;
-right:0;
-bottom:0;
-left:0;
-z-index:-1;
-}
-.nav-open #magic-shield {
-z-index:99;
-background-color: rgba( 255, 255, 255, 0.75 );
+
+#menu {
+max-width:105em;
+margin:0 auto;
 }
 .js #menu {
 z-index: 100;
@@ -305,7 +281,7 @@ position: fixed;
 top:0;
 right:-40em;
 bottom:150%;
-padding: 6.25em 2em 0;
+padding: 3.2em 2em 0;
 background-color:#7b0e7f;
 background-image:url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
 
@@ -313,9 +289,42 @@ background-image:url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
 -moz-box-shadow: 1em 0 2.5em 1.3em rgba(0,0,0,0.5);
 box-shadow: 1em 0 2.5em 1.3em rgba(0,0,0,0.5);
 }
+.admin-bar.js #menu {
+padding-top:6.25em;
+}
 .nav-open #menu {
 right:0;
 bottom:0;
+}
+#menu .close {
+display:none;
+font-size:2em;
+border-bottom:0 none;
+margin-bottom: 1em;
+}
+.js #menu .close {
+display:block;
+}
+.js #menu .alt-text {
+visibility: hidden;
+}
+#menu .title {
+font-size:3.8em;
+font-weight:700;
+text-transform:uppercase;
+color:#fff;
+font-style: normal;
+}
+.js #menu .title {
+display: none;
+}
+#menu ul {
+padding-left:0;
+}
+#menu li {
+list-style:none;
+line-height:1.25;
+font-size:1.2em;
 }
 #menu li:first-child a {
 border-top:0;
@@ -329,6 +338,7 @@ font-size:1.6em;
 padding:0.5em 0 0.5em 1.5em;
 font-family:'Crete Round', Arial, Helvetica, sans-serif;
 text-align: left;
+display:block;
 }
 #menu li a:hover,
 #menu li a:focus {
@@ -336,28 +346,18 @@ background-color: #B47FB6;
 background-color: rgba(180,127,182, 0.5);
 }
 
-nav section {
-font-family: Helvetica,Arial,sans-serif;
-font-weight:100;
-margin-bottom:4em;
+#magic-shield {
+background-color:rgba(255, 255, 255, 0);
+position:fixed;
+top:0;
+right:0;
+bottom:0;
+left:0;
+z-index:-1;
 }
-nav ul {
-padding-left:0;
-}
-nav li {
-list-style:none;
-line-height:1.25;
-font-size:1.2em;
-}
-nav li a {
-display:block;
-padding:0.1em 0;
-}
-nav h2 {
-font-size:1.4em;
-font-weight:700;
-text-transform:uppercase;
-margin:0;
+.nav-open #magic-shield {
+z-index:99;
+background-color: rgba( 255, 255, 255, 0.75 );
 }
 
 
