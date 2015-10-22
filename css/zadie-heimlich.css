@@ -186,8 +186,6 @@ background-image:url(/wp-content/themes/zadie-heimlich/img/symphony-light-purple
 background-repeat:repeat;
 background-attachment:fixed;
 padding:2em 4em 1.5em;
-overflow:auto;
-height:100%;
 position:relative;
 }
 header .site-title {
