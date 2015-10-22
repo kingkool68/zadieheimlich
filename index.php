@@ -1,5 +1,5 @@
 <?php get_header(); ?>
-	
+
 	<div id="content">
 	<?php
 	if ( have_posts() ) :
@@ -9,10 +9,30 @@
 	endif;
 	?>
 	</div>
-	
-	<?php 
-	if( $next_page_link = get_next_posts_link('More') ) {
-		echo '<nav>' . $next_page_link . '</nav>';
+
+	<?php
+	global $wp_query, $wp_rewrite;
+
+	// Setting up default values based on the current URL.
+	$pagenum_link = html_entity_decode( get_pagenum_link() );
+	$url_parts = explode( '?', $pagenum_link );
+
+	// Get max pages and current page out of the current query, if available.
+	$total = isset( $wp_query->max_num_pages ) ? $wp_query->max_num_pages : 1;
+	$current = get_query_var( 'paged' ) ? intval( get_query_var( 'paged' ) ) : 1;
+
+	// Append the format placeholder to the base URL.
+	$pagenum_link = trailingslashit( $url_parts[0] ) . '%_%';
+
+	// URL base depends on permalink settings.
+	$format = $wp_rewrite->using_index_permalinks() && ! strpos( $pagenum_link, 'index.php' ) ? 'index.php/' : '';
+	$format .= $wp_rewrite->using_permalinks() ? user_trailingslashit( $wp_rewrite->pagination_base . '/%#%', 'paged' ) : '?paged=%#%';
+
+
+	if( $current < $total ) {
+		$format = str_replace( '%#%', $current + 1, $format );
+		$url = str_replace( '%_%', $format, $pagenum_link );
+		echo '<a href="' . $url . '" class="rounded-button">More</a>';
 	}
 	?>
 
