@@ -102,8 +102,8 @@ function zah_gallery_after_article( $post ) {
 ?>
 
 <nav>
-	<a href="<?php echo $nav->next_permalink ?>" class="next">Next <span class="arrow">&rarr;</span></a>
-	<a href="<?php echo $nav->prev_permalink ?>" class="prev"><span class="arrow">&larr;</span> Prev</a>
+	<a href="<?php echo $nav->next_permalink ?>" class="next rounded-button">Next <span class="arrow">&rarr;</span></a>
+	<a href="<?php echo $nav->prev_permalink ?>" class="prev rounded-button"><span class="arrow">&larr;</span> Prev</a>
 	<p class="progress"><?php echo $nav->current;?>/<?php echo $nav->total;?></p>
 </nav>
 
