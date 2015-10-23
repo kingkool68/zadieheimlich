@@ -18,8 +18,7 @@ add_action('wp_before_admin_bar_render', 'remove_wp_menu_from_admin_bar', 0);
 //CSS & JS
 function zah_wp_enqueue_scripts() {
 	wp_register_style( 'zah-google-fonts', 'http://fonts.googleapis.com/css?family=Crete+Round:400,400italic|Open+Sans:300italic,700italic,300,700', array(), NULL, 'all' );
-	wp_register_style( 'reset', get_stylesheet_directory_uri() . '/css/reset.css', array(), NULL, 'all' );
-	wp_register_style( 'zadie-heimlich', get_stylesheet_directory_uri() . '/css/zadie-heimlich.css', array('zah-google-fonts', 'reset'), NULL, 'all' );
+	wp_register_style( 'zadie-heimlich', get_stylesheet_directory_uri() . '/css/zadie-heimlich.css', array('zah-google-fonts'), NULL, 'all' );
 
 	wp_enqueue_style( 'zadie-heimlich' );
 
