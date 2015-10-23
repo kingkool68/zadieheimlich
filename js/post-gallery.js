@@ -92,6 +92,17 @@ jQuery(document).ready(function($) {
 				$.gallery.posts[i].loaded = true;
 			}
 		},
+		scrollIntoView: function(url) {
+			if( !url ) {
+				return;
+			}
+
+			if( hash = url.split('#')[1] ) {
+				if( el = document.getElementById(hash) ) {
+					el.scrollIntoView();
+				}
+			}
+		},
 		ajaxCallback: function(i) {
 			return function(full_page) {
 				html = $('#content', full_page);
@@ -163,11 +174,13 @@ jQuery(document).ready(function($) {
 	$('#content').on('click', 'nav .next', function(e) {
 		e.preventDefault();
 		$.gallery.next();
+		$.gallery.scrollIntoView(this.href);
 		$.gallery.preloadTheNext(5);
 
 	}).on('click', 'nav .prev', function(e) {
 		e.preventDefault();
 		$.gallery.previous();
+		$.gallery.scrollIntoView(this.href);
 		$.gallery.preloadThePrevious(5);
 	});
 
