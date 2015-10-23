@@ -1,12 +1,12 @@
 jQuery(document).ready(function($) {
 	var regex = /(.+\/)gallery\/([^\/]+)\//gi;
 	var parts = regex.exec(window.location.href);
-	
+
 	// Simple feature detection for History Management (borrowed from Modernizr)
 	function supportsHistory() {
 		return !!(window.history && history.pushState);
 	}
-	
+
 	function calculateImageSize() {
 		var winWidth = $(window).width();
 		var imageSizes = [
@@ -17,18 +17,18 @@ jQuery(document).ready(function($) {
 			{ size: '800-wide', width: 800 }
 			//{ size: 'large', width: 1024 }
 		];
-		
+
 		for( i=0; i<imageSizes.length; i++ ) {
 			img = imageSizes[i];
 			if( winWidth <= img.width ) {
 				return img.size;
 				break;
-			} 
+			}
 		}
-		
+
 		return '';
 	}
-	 
+
 	$.gallery = {
 		url: parts[1],
 		postName: parts[2],
@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 		preloadTheNext: function(count) {
 			var start = this.current;
 			var end = this.current + count;
-			
+
 			for( var i = start; i < end; i++ ) {
 				var index = i;
 				if( index > this.max - 1 ) {
@@ -56,7 +56,7 @@ jQuery(document).ready(function($) {
 		preloadThePrevious: function(count) {
 			var start = this.current;
 			var end = this.current - count;
-			 
+
 			for( var i = start; i > end; i-- ) {
 				var index = i;
 				if( index < 0 ) {
@@ -109,68 +109,68 @@ jQuery(document).ready(function($) {
 			if( !post || !post.html ) {
 				return false;
 			}
-			
+
 			$('#content').html( post.html );
 			document.title = post.title;
-			
+
 			if( supportsHistory() ) {
 				newPath = this.url + 'gallery/' + post.slug + '/';
 				window.history.replaceState(null, null, newPath);
 			}
 		}
 	}
-	
+
 	var imgSize = calculateImageSize();
 	postGalleryUrls = $('#post-gallery-urls').val().split(' ');
 	if( !postGalleryUrls ) {
 		return false;
 	}
-	
+
 	$.gallery.posts = [];
 	for( var i = 0; i < postGalleryUrls.length; i++ ) {
 		var postGalleryUrl = postGalleryUrls[i];
-		
+
 		var pieces = regex.exec(postGalleryUrl);
 		if( !pieces ) {
 			var pieces = regex.exec(postGalleryUrl);
 		}
 		var postName = pieces[2];
-		
+
 		if(postGalleryUrl == parts[0]) {
 			$.gallery.current = i;
 			$.gallery.max = postGalleryUrls.length;
 		}
-		
+
 		urlToFetch = postGalleryUrl;
 		if( imgSize ) {
 			urlToFetch += 'size/' + imgSize + '/';
 		}
-		
+
 		$.gallery.posts.push({
 			url:  postGalleryUrl,
-			urlToFetch: urlToFetch, 
+			urlToFetch: urlToFetch,
 			slug: postName,
 			loaded: false,
 			html: '',
 			title: ''
 		});
 	}
-	
+
 	$.gallery.preloadTheNext(5);
 	$.gallery.preloadThePrevious(3);
 	//$.gallery.preloadAll();
-	 
+
 	$('#content').on('click', 'nav .next', function(e) {
 		e.preventDefault();
 		$.gallery.next();
 		$.gallery.preloadTheNext(5);
-		
+
 	}).on('click', 'nav .prev', function(e) {
 		e.preventDefault();
 		$.gallery.previous();
 		$.gallery.preloadThePrevious(5);
 	});
-	 
+
 	$(document).keydown(function(e) {
 		if( e.which == 39 ) {
 			e.preventDefault();
@@ -181,5 +181,5 @@ jQuery(document).ready(function($) {
 			$('#content nav .prev').eq(0).click();
 		}
 	});
-	 
+
 });
