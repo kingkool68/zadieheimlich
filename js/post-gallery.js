@@ -1,6 +1,4 @@
 jQuery(document).ready(function($) {
-	var regex = /(.+\/)gallery\/([^\/]+)\//gi;
-	var parts = regex.exec(window.location.href);
 
 	// Simple feature detection for History Management (borrowed from Modernizr)
 	function supportsHistory() {
@@ -29,10 +27,16 @@ jQuery(document).ready(function($) {
 		return '';
 	}
 
+
+	var regex = /(.+\/)gallery\/([^\/]+)\//gi;
+	var parts = regex.exec(window.location.href);
+
 	$.gallery = {
 		url: parts[1],
 		postName: parts[2],
 		posts: [],
+		waitingToLoad: -1,
+		showingLoadingAnimation: false,
 		next: function() {
 			this.current = (this.current == this.max - 1) ? 0 : this.current + 1;
 			this.load();
@@ -66,22 +70,30 @@ jQuery(document).ready(function($) {
 			}
 		},
 		preloadAll: function() {
-			//Start from the current image and preload the rest of the images.
+			// Start from the current image and preload the rest of the images.
 			for( i=this.current; i<this.max; i++ ) {
 				this.preload(i);
 			}
-			//Now we can start from the beginning and preload up to the current image.
+			// Now we can start from the beginning and preload up to the current image.
 			for ( i=0; i<this.current; i++) {
 				this.preload(i);
 			}
 		},
 		preload: function(i) {
-			var post = $.gallery.posts[i];
+			var post = this.posts[i];
 			if( !post || post.loaded ) {
+				if( post.loaded ) {
+					$('#preload-' + i).remove();
+				}
+				return false;
+			}
+
+			if( post.preloading ) {
 				return false;
 			}
 			if( !post.html ) {
-				//Fetch the HTML and preload it.
+				this.posts[i].preloading = true;
+				// Fetch the HTML and preload it.
 				$.ajax({
 					url: post.urlToFetch,
 					dataType: 'html',
@@ -89,7 +101,13 @@ jQuery(document).ready(function($) {
 				});
 			} else {
 				$('<div id="preload-' + i + '" style="position:absolute;left:-9999em;height:1px;width:1px;overflow:hidden;">' + post.html + '</div>').appendTo('body');
-				$.gallery.posts[i].loaded = true;
+				this.posts[i].loaded = true;
+				this.posts[i].preloading = false;
+				if( i == this.waitingToLoad ) {
+					this.load(i);
+					this.waitingToLoad = -1;
+					this.showingLoadingAnimation = false;
+				}
 			}
 		},
 		scrollIntoView: function(url) {
@@ -104,11 +122,21 @@ jQuery(document).ready(function($) {
 			}
 		},
 		ajaxCallback: function(i) {
+			if( this.waitingToLoad > -1 ) {
+				var waitingPost = this.posts[ this.waitingToLoad ];
+				if( waitingPost.loaded ) {
+					this.load( this.waitingToLoad );
+				} else {
+					this.preload( this.waitingToLoad );
+				}
+			}
+
 			return function(full_page) {
 				html = $('#content', full_page);
 				title = full_page.match(/<title>(.+)<\/title>/ig)[0].replace(/<title>(.+)<\/title>/ig, "$1");
 				$.gallery.posts[i].html = html.html();
 				$.gallery.posts[i].title = title;
+				$.gallery.posts[i].preloading = false;
 				$.gallery.preload(i);
 			}
 		},
@@ -118,6 +146,23 @@ jQuery(document).ready(function($) {
 			}
 			var post = this.posts[i];
 			if( !post || !post.html ) {
+				if( !post.html ) {
+					if( !this.showingLoadingAnimation ) {
+						loadingBarsHTML = '';
+						loadingBarsHTML += '<div class="loading-bars">';
+							loadingBarsHTML += '<div class="rect1"></div>';
+							loadingBarsHTML += '<div class="rect2"></div>';
+							loadingBarsHTML += '<div class="rect3"></div>';
+							loadingBarsHTML += '<div class="rect4"></div>';
+							loadingBarsHTML += '<div class="rect5"></div>';
+						loadingBarsHTML += '</div>';
+						$('#content .inner').html( loadingBarsHTML );
+						this.showingLoadingAnimation = true;
+					}
+
+					this.waitingToLoad = i;
+				}
+
 				return false;
 			}
 
@@ -167,21 +212,20 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	$.gallery.preloadTheNext(5);
-	$.gallery.preloadThePrevious(3);
+	$.gallery.preloadTheNext(3);
+	$.gallery.preloadThePrevious(2);
 	//$.gallery.preloadAll();
 
 	$('#content').on('click', 'nav .next', function(e) {
 		e.preventDefault();
 		$.gallery.next();
 		$.gallery.scrollIntoView(this.href);
-		$.gallery.preloadTheNext(5);
-
+		$.gallery.preloadTheNext(3);
 	}).on('click', 'nav .prev', function(e) {
 		e.preventDefault();
 		$.gallery.previous();
 		$.gallery.scrollIntoView(this.href);
-		$.gallery.preloadThePrevious(5);
+		$.gallery.preloadThePrevious(3);
 	});
 
 	$(document).keydown(function(e) {
