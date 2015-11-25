@@ -267,11 +267,25 @@ class ZAH_Instagram {
 		</select>
 
 		<input type="text" name="object-id">
+		<?php if( isset($_GET['debug']) ): ?>
+			<input type="hidden" name="debug" value="1">
+		<?php endif; ?>
 
 		<p><input type="submit" value="Add Subscription" class="button button-primary"></p>
 
 		</form>
-		<?php
+
+		<?php if( isset( $_GET['debug'] ) ):
+			$instagram = $this->get_instagram_token();
+			$url_args = array(
+				'client_id' => $instagram->service->key,
+				'client_secret' => $instagram->service->secret,
+			);
+			$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
+		?>
+		<h2>Debugging Helpers</h2>
+		<p><a href="<?php echo $url; ?>">List Subscriptions</a></p>
+		<?php endif;
 	}
 
 	public function save_subscriptions() {
@@ -293,6 +307,11 @@ class ZAH_Instagram {
 				);
 				$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
 				$response = wp_remote_request( $url, $request_args );
+				if( isset($_POST['debug']) ) {
+					echo '<pre>';
+					var_dump( $response );
+					echo '</pre>';
+				}
 			}
 		}
 
@@ -317,7 +336,14 @@ class ZAH_Instagram {
 				),
 			) );
 
-			wp_redirect( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-subscriptions' ) );
+			if( isset( $_POST['debug'] ) ) {
+				echo '<pre>';
+				var_dump( $response );
+				echo '</pre>';
+			} else {
+				wp_redirect( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-subscriptions' ) );
+			}
+
 			die();
 		}
 	}
