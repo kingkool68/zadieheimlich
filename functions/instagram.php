@@ -332,7 +332,7 @@ class ZAH_Instagram {
 					'aspect' => 'media',
 					'object_id' => $object_id,
 					'verify_token' => $type . '-' . $object_id . '-token',
-					'callback_url' => get_site_url() . '/instagram-subscription-callback/',
+					'callback_url' => get_site_url(),
 				),
 			) );
 
