@@ -345,7 +345,7 @@ class ZAH_Instagram {
 					'aspect' => 'media',
 					'object_id' => $object_id,
 					'verify_token' => $type . '-' . $object_id . '-token',
-					'callback_url' => add_query_arg( array( 'instagram-subscription-callback' => '' ), get_site_url() ),
+					'callback_url' => get_site_url(),
 				),
 			) );
 
