@@ -344,7 +344,7 @@ class ZAH_Instagram {
 					'object' => $type,
 					'aspect' => 'media',
 					'object_id' => $object_id,
-					'verify_token' => $type . '-' . $object_id . '-token',
+					'verify_token' => 'zadieVerifyToken',
 					'callback_url' => get_site_url(),
 				),
 			) );
