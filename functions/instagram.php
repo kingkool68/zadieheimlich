@@ -3,13 +3,16 @@
 class ZAH_Instagram {
 
 	var $whitelisted_usernames = array( 'naudebynature', 'kingkool68', 'lilzadiebug' );
+	var $subscription_errors = array();
 
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( $this, 'instagram_subscription_callback' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'wp_ajax_zah_instagram_manual_sync', array( $this, 'manual_sync_ajax_callback' ) );
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
 		add_action( 'wp', array( $this, 'wp' ) );
+		add_action( 'init', array( $this, 'save_subscriptions' ) );
 		add_action( 'instagram_subscription_tag_zadiealyssa', array( $this, 'instagram_realtime_update' ) );
 		add_action( 'manage_posts_custom_column' , array( $this, 'manage_posts_custom_column' ) );
 
@@ -222,8 +225,12 @@ class ZAH_Instagram {
 
 
 	public function subscriptions_submenu() {
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
-			$this->save_subscriptions();
+		if( $this->subscription_errors ) {
+			echo '<div class="error">';
+			echo '<p>';
+			echo implode( '</p><p>', $this->subscription_errors );
+			echo '</p>';
+			echo '</div>';
 		}
 		?>
 		<h1>Instagram Subscriptions</h1>
@@ -271,6 +278,8 @@ class ZAH_Instagram {
 			<input type="hidden" name="debug" value="1">
 		<?php endif; ?>
 
+		<?php wp_nonce_field( 'zah-instagram-subscription', 'zah-instagram-nonce' ); ?>
+
 		<p><input type="submit" value="Add Subscription" class="button button-primary"></p>
 
 		</form>
@@ -289,8 +298,12 @@ class ZAH_Instagram {
 	}
 
 	public function save_subscriptions() {
-		$instagram = $this->get_instagram_token();
 
+		if( !isset( $_POST['zah-instagram-nonce'] ) || !wp_verify_nonce( $_POST['zah-instagram-nonce'], 'zah-instagram-subscription' ) ) {
+			return;
+		}
+
+		$instagram = $this->get_instagram_token();
 		if ( isset( $_POST['delete-subscriptions'] ) && ! empty( $_POST['delete-subscriptions'] ) ) {
 			$to_delete = array_map('intval', $_POST['delete-subscriptions']);
 
@@ -332,7 +345,7 @@ class ZAH_Instagram {
 					'aspect' => 'media',
 					'object_id' => $object_id,
 					'verify_token' => $type . '-' . $object_id . '-token',
-					'callback_url' => get_site_url(),
+					'callback_url' => add_query_arg( array( 'instagram-subscription-callback' => '' ), get_site_url() ),
 				),
 			) );
 
@@ -340,11 +353,17 @@ class ZAH_Instagram {
 				echo '<pre>';
 				var_dump( $response );
 				echo '</pre>';
-			} else {
-				wp_redirect( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-subscriptions' ) );
 			}
 
-			die();
+			if( $response['response']['code'] > 399 ) {
+				$payload = json_decode( $response['body'] );
+				$message = '';
+				if( isset( $payload->meta->error_message ) ) {
+					$message .= $payload->meta->error_message;
+				}
+				$message .= ' (' . $response['response']['code'] . ' ' . $response['response']['message'] . ')';
+				$this->subscription_errors[] = $message;
+			}
 		}
 	}
 
@@ -368,6 +387,45 @@ class ZAH_Instagram {
 		// Boo! There is some kind of problem
 		$output = new WP_Error( 'get_instagram_subscriptions', 'There was an error getting the instagram subscriptions.', $response );
 		return $output;
+	}
+
+	public function instagram_subscription_callback() {
+		if( !isset( $_GET['instagram-subscription-callback'] ) ) {
+			return;
+		}
+		if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
+			// return;
+		}
+		$update = file_get_contents('php://input');
+	    $updates = json_decode($update);
+
+		/*
+		Sample of $photos...
+
+		[
+		  {
+			"changed_aspect":"media",
+			"object":"tag",
+			"object_id":"nofilter",
+			"time":1423116308,
+			"subscription_id":16698275,
+			"data":{
+
+			}
+		  }
+		]
+		*/
+		if( is_array( $updates ) && !empty( $updates ) ) {
+			foreach( $updates as $update ) {
+				$type = $update->object;
+				$object_id = strtolower( $update->object_id );
+				do_action( 'instagram_subscription_' . $type . '_' . $object_id, $update );
+			}
+		}
+
+		wp_send_json_success();
+
+		die();
 	}
 
 
