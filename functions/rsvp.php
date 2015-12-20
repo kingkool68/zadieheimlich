@@ -22,7 +22,7 @@ function zah_redirect_rsvp_vanity_url() {
 		return;
 	}
 	if( $wp_query->query['name'] == 'rsvp' ) {
-		$page = get_page_by_path( 'rsvp-for-zadies-first-birthday-party' );
+		$page = get_page_by_path( 'rsvp-zadies-first-birthday-party' );
 		wp_safe_redirect( get_permalink( $page->ID ) );
 		die();
 	}
@@ -30,7 +30,7 @@ function zah_redirect_rsvp_vanity_url() {
 add_action( 'wp', 'zah_redirect_rsvp_vanity_url' );
 
 function zah_add_rsvp_form_to_the_content( $content ) {
-	if( !is_page( 'rsvp-for-zadies-first-birthday-party' ) ) {
+	if( !is_page( 'rsvp-zadies-first-birthday-party' ) ) {
 		return $content;
 	}
 
@@ -172,7 +172,7 @@ function zah_rsvp_process_form() {
 	$inserted = $wpdb->insert( $wpdb->prefix . 'rsvps', $db_data, $formats );
 	$thing = $wpdb->last_error;
 
-	$page = get_page_by_path( 'rsvp-for-zadies-first-birthday-party' );
+	$page = get_page_by_path( 'rsvp-zadies-first-birthday-party' );
 	$url = add_query_arg( 'attending', strtolower( $attending ), get_permalink( $page->ID ) );
 
 	wp_safe_redirect( $url );
