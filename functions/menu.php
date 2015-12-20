@@ -49,9 +49,9 @@ function zah_menu_wp_footer() {
 <script>
 jQuery(document).ready(function($) {
 	// Add the clss 'js' to th <body> and append an element to fade out the body of the site while the menu is open, and listen for events to close the menu.
-	$('body').addClass('js').find('header').eq(0).before('<div id="magic-shield" />');
+	$('body').addClass('has-js').find('header').eq(0).before('<div id="magic-shield" />');
 
-	// If the menu is open, pressing the escap key should close the menu.
+	// If the menu is open, pressing the escape key should close the menu.
 	function bindEscapeKey(e) {
 		if (e.keyCode != 27) {
 			return;

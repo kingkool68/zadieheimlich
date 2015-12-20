@@ -48,3 +48,4 @@ include 'functions/media.php';
 include 'functions/menu.php';
 include 'functions/post-galleries.php';
 include 'functions/instagram.php';
+include 'functions/rsvp.php';
