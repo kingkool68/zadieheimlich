@@ -8,14 +8,14 @@ function zah_post_gallery_generate_rewrite_rules($wp_rewrite) {
 
 	$wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
 }
-add_filter('generate_rewrite_rules', 'zah_post_gallery_generate_rewrite_rules');
+add_filter( 'generate_rewrite_rules', 'zah_post_gallery_generate_rewrite_rules' );
 
 function zah_post_gallery_query_vars( $query_vars ) {
 	$query_vars[] = 'post_gallery';
 	$query_vars[] = 'size';
 	return $query_vars;
 }
-add_filter('query_vars', 'zah_post_gallery_query_vars' );
+add_filter( 'query_vars', 'zah_post_gallery_query_vars' );
 
 // URLs like /category/gallery/ wouldn't work because our rewrite rules tell WordPress this is a post_gallery when it is really not intended that way. This function sets everything right. Sort of.
 function zah_post_gallery_parse_request( $query ) {
@@ -46,7 +46,7 @@ function zah_post_gallery_template_redirect() {
 		die();
 	}
 }
-add_action('template_redirect', 'zah_post_gallery_template_redirect');
+add_action( 'template_redirect', 'zah_post_gallery_template_redirect' );
 
 function zah_post_gallery_template_include( $orig_template ) {
 	if( is_post_gallery() ) {
@@ -61,7 +61,7 @@ function zah_post_gallery_template_include( $orig_template ) {
 
 	return $orig_template;
 }
-add_filter('template_include', 'zah_post_gallery_template_include');
+add_filter( 'template_include', 'zah_post_gallery_template_include' );
 
 function zah_post_gallery_pre_get_posts( $query ) {
 	if( is_post_gallery() && get_query_var('attachment') && $query->is_main_query() ) {
@@ -113,7 +113,7 @@ function zah_gallery_after_article( $post ) {
 //add_action( 'zah_attachment_before_article', 'zah_gallery_after_article' );
 add_action( 'zah_attachment_after_article', 'zah_gallery_after_article' );
 
-//Add noindex to pages that have the size query var added
+// Add noindex to pages that have the size query var added
 function zah_post_gallery_wpseo_head($thing1) {
 	if( is_post_gallery() && get_query_var('size') )
 	echo '<meta name="robots" content="noindex">' . "\n";
@@ -126,7 +126,7 @@ function zah_post_gallery_opengraph_type( $type ) {
 	}
 	return $type;
 }
-//add_filter( 'wpseo_opengraph_type', 'zah_post_gallery_opengraph_type' );
+// add_filter( 'wpseo_opengraph_type', 'zah_post_gallery_opengraph_type' );
 
 function zah_post_gallery_opengraph_image( $src ) {
 	if( wp_attachment_is_image() ) {
@@ -136,7 +136,7 @@ function zah_post_gallery_opengraph_image( $src ) {
 
 	return $src;
 }
-//add_filter( 'wpseo_opengraph_image', 'zah_post_gallery_opengraph_image' );
+// add_filter( 'wpseo_opengraph_image', 'zah_post_gallery_opengraph_image' );
 
 function zah_post_gallery_canonical( $canonical ) {
 	global $post;
@@ -224,8 +224,8 @@ function zah_post_gallery_get_gallery_posts() {
 			'ID' => $post->ID,
 			'post_name' => $post->post_name,
 			'post_title' => $post->post_title,
-			'post_url' => get_permalink($post->ID),
-			'post_gallery_url' => zah_post_gallery_link($parent_post->ID, $post->post_name)
+			'post_url' => get_permalink( $post->ID ),
+			'post_gallery_url' => zah_post_gallery_link( $parent_post->ID, $post->post_name )
 		);
 	endforeach;
 
@@ -273,8 +273,8 @@ function zah_post_gallery_get_nav() {
 		$output = (object) array(
 			'attachments' => $attachments,
 			'parent' => get_post( $posts->parent_id ),
-			'next_permalink' => zah_post_gallery_link($posts->parent_id, $next_slug),
-			'prev_permalink' => zah_post_gallery_link($posts->parent_id, $prev_slug),
+			'next_permalink' => zah_post_gallery_link( $posts->parent_id, $next_slug ),
+			'prev_permalink' => zah_post_gallery_link( $posts->parent_id, $prev_slug ),
 			'total' => $total_attachments,
 			'current' => $current + 1
 		);
