@@ -32,7 +32,7 @@
 	if( $current < $total ) {
 		$format = str_replace( '%#%', $current + 1, $format );
 		$url = str_replace( '%_%', $format, $pagenum_link );
-		echo '<a href="' . $url . '" class="rounded-button">More</a>';
+		echo '<a href="' . $url . '" class="rounded-button" id="pagination">More</a>';
 	}
 	?>
 
