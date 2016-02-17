@@ -10,6 +10,7 @@ class ZAH_Instagram {
 		add_action( 'init', array( $this, 'instagram_subscription_callback' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'wp_ajax_zah_instagram_manual_sync', array( $this, 'manual_sync_ajax_callback' ) );
+		add_action( 'wp_ajax_zah_instagram_manual_sync_flush_cache', array( $this, 'manual_sync_flush_cache' ) );
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
 		add_action( 'wp', array( $this, 'wp' ) );
 		add_action( 'init', array( $this, 'save_subscriptions' ) );
@@ -122,6 +123,17 @@ class ZAH_Instagram {
 								'next_max_id': next_max_id
 							});
 						} else {
+							var total = parseInt( $('#total').text() );
+							var skipped = parseInt( $('#skipped').text() );
+							if( total - skipped > 0 ) {
+								// Flush the cache
+								var flushData = {
+									'action': 'zah_instagram_manual_sync_flush_cache'
+								}
+								$.post(ajaxurl, flushData, function(flushResp) {
+
+								}
+							}
 							$('#stats').after('<p>All done :-)</p>');
 						}
 					});
@@ -221,6 +233,10 @@ class ZAH_Instagram {
 		}
 
 		wp_send_json_success( (object) $output );
+	}
+
+	public function manual_sync_flush_cache() {
+		zah_flush_cache();
 	}
 
 
