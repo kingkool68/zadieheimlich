@@ -130,9 +130,7 @@ class ZAH_Instagram {
 								var flushData = {
 									'action': 'zah_instagram_manual_sync_flush_cache'
 								}
-								$.post(ajaxurl, flushData, function(flushResp) {
-
-								}
+								$.post(ajaxurl, flushData, function(flushResp) {});
 							}
 							$('#stats').after('<p>All done :-)</p>');
 						}
