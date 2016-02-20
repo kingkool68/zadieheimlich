@@ -70,6 +70,13 @@ function zah_attachment_link( $link, $post_id ) {
 }
 add_filter( 'attachment_link', 'zah_attachment_link', 2, 10 );
 
+function zah_set_video_element_preload_to_none( $out, $pairs, $atts, $shortcode ) {
+	$out['preload'] = 'none';
+
+	return $out;
+}
+add_filter( 'shortcode_atts_video', 'zah_set_video_element_preload_to_none', 10, 4 );
+
 
 function zah_post_gallery( $nothing, $attr ) {
 	$post = get_post();
