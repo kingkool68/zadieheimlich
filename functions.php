@@ -43,6 +43,7 @@ function zah_content_footer( $post ) {
 }
 //add_action( 'zah_content_footer', 'zah_content_footer' );
 
+include 'functions/admin.php';
 include 'functions/dates.php';
 include 'functions/media.php';
 include 'functions/menu.php';
