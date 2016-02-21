@@ -8,6 +8,7 @@
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php bloginfo('charset'); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="unsafe-url">
 <?php if( $post ) { ?>
 <meta name="date" content="<?= date('Ymd',strtotime($post->post_date)); ?>">
 <?php } ?>
