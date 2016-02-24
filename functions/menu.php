@@ -34,6 +34,7 @@ function zah_menu_footer() {
 			);
 			wp_nav_menu( $args );
 			?>
+			<a href="https://github.com/kingkool68/zadieheimlich" class="github"><svg class="icon icon-github"><use xlink:href="#icon-github"></use></svg></a>
 		</section>
 	</nav>
 <?php

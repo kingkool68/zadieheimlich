@@ -569,6 +569,17 @@ margin:1em;
 border-color:#F8B1FA
 }
 
+/* SVG Icons */
+.icon {
+display: inline-block;
+width: 1em;
+height: 1em;
+fill: currentColor;
+}
+.icon-github {
+width: 0.8571440825859895em;
+}
+
 /* Override the video player color defaults */
 article.instagram .mejs-controls .mejs-time-rail .mejs-time-current {
 background-color:#7b0e7f;
@@ -739,6 +750,19 @@ display:block;
 #menu li a:focus {
 background-color: #B47FB6;
 background-color: rgba(180,127,182, 0.5);
+}
+#menu .github {
+color: #fff;
+display: block;
+text-align: center;
+font-size: 4.5em;
+padding-top: 0.45em;
+border-bottom: 0;
+}
+#menu .github:hover,
+#menu .github:focus {
+color: #B47FB6;
+color: rgba(180,127,182, 0.5);
 }
 
 #magic-shield {
