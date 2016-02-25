@@ -37,6 +37,7 @@
 </head>
 
 <body <?php body_class(); ?>>
+	<?php include get_template_directory() . '/svg/zadie-heimlich-icons.svg'; ?>
 	<a id="top" href="#content">Skip to Content</a>
 	<header class="clearfix">
 		<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>

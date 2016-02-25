@@ -34,6 +34,11 @@ function zah_menu_footer() {
 			);
 			wp_nav_menu( $args );
 			?>
+			<p class="social-links">
+				<a href="https://github.com/kingkool68/zadieheimlich" class="github" title="The code that powers this site is on GitHub"><?php echo zah_svg_icon( 'github' ); ?></a>
+				<a href="https://www.instagram.com/lilzadiebug/" class="instagram" rel="me" title="Follow Zadie on Instagram @LilZadieBug"><?php echo zah_svg_icon( 'instagram' ); ?></a>
+				<a href="https://www.facebook.com/media/set/?set=ft.10101891838917048&type=1" title="Zadie's on Facebook"><?php echo zah_svg_icon( 'facebook' ); ?></a>
+			</p>
 		</section>
 	</nav>
 <?php
