@@ -576,6 +576,12 @@ width: 1em;
 height: 1em;
 fill: currentColor;
 }
+.icon-facebook {
+width: 0.857421875em;
+}
+.icon-instagram {
+width: 0.857421875em;
+}
 .icon-github {
 width: 0.8571440825859895em;
 }
@@ -751,16 +757,21 @@ display:block;
 background-color: #B47FB6;
 background-color: rgba(180,127,182, 0.5);
 }
-#menu .github {
+#menu .social-links {
+padding-top:0.75em;
+overflow:auto;
+height:100%;
+}
+#menu .social-links a {
 color: #fff;
-display: block;
+float:left;
+width:33.333%;
 text-align: center;
-font-size: 4.5em;
-padding-top: 0.45em;
+font-size: 2.5em;
 border-bottom: 0;
 }
-#menu .github:hover,
-#menu .github:focus {
+#menu .social-links a:hover,
+#menu .social-links a:focus {
 color: #B47FB6;
 color: rgba(180,127,182, 0.5);
 }

@@ -23,11 +23,11 @@ function html5_img_caption_shortcode($string, $attr, $content = null) {
 		'class' => ''
     ), $attr)
     );
-    
+
 	if ( (int) $width < 1 || empty($caption) ) {
         return $content;
 	}
-    
+
 	$described_by = '';
 	if ( $id ) {
 		//Underscores in attributes are yucky.
@@ -35,13 +35,13 @@ function html5_img_caption_shortcode($string, $attr, $content = null) {
 		$described_by = 'aria-describedby="' .  $id_attr . '"';
 		$id = 'id="' . $id_attr . '" ';
 	}
-	
+
 	$inline_width = '';
 	if( $align === 'alignleft' || $align === 'alignright' ) {
 		//$inline_width = 'style="width: '. (10 + (int) $width) . 'px"';
 	}
 	$class.= ' wp-caption ' . esc_attr($align);
-	
+
     return '<figure ' . $described_by . 'class="' .  $class . '" ' . $inline_width . '>' .
         do_shortcode( $content ) .
         '<figcaption class="wp-caption-text" ' . $id . '>' . $caption . '</figcaption>'.
@@ -80,7 +80,7 @@ add_filter( 'shortcode_atts_video', 'zah_set_video_element_preload_to_none', 10,
 
 function zah_post_gallery( $nothing, $attr ) {
 	$post = get_post();
-	
+
 	static $instance = 0;
 	$instance++;
 
@@ -91,7 +91,7 @@ function zah_post_gallery( $nothing, $attr ) {
 		}
 		$attr['include'] = $attr['ids'];
 	}
-	
+
 	$atts = shortcode_atts( array(
 		'order'      => 'ASC',
 		'orderby'    => 'menu_order ID',
@@ -106,7 +106,7 @@ function zah_post_gallery( $nothing, $attr ) {
 	$id = intval( $atts['id'] );
 
 	if ( ! empty( $atts['include'] ) ) {
-		$_attachments = get_posts( array( 
+		$_attachments = get_posts( array(
 			'include' => $atts['include'],
 			'post_status' => 'inherit',
 			'post_type' => 'attachment',
@@ -158,17 +158,17 @@ function zah_post_gallery( $nothing, $attr ) {
 
 
 	$size_class = sanitize_html_class( $atts['size'] );
-	
+
 	$output = "<section class=\"gallery gallery-{$columns}-column gallery-size-{$img_size}\">";
 
 	$i = 0;
 	foreach ( $attachments as $id => $attachment ) {
-		
+
 		$attr = array( 'class' => 'attachment-' . $atts['size'] );
 		if( trim( $attachment->post_excerpt ) ) {
 			$attr['aria-describedby'] = "selector-$id";
 		}
-		
+
 		$image_meta  = wp_get_attachment_metadata( $id );
 		$img_width = $image_meta['width'];
 		$img_height = $image_meta['height'];
@@ -183,13 +183,13 @@ function zah_post_gallery( $nothing, $attr ) {
 				$orientation = 'square';
 			}
 		}
-		
+
 		$attr['class'] .= ' ' . $orientation;
-		
+
 		if( $i % $columns == 0 ) {
 			$attr['class'] .= ' end';
 		}
-		
+
 		if ( ! empty( $atts['link'] ) && 'file' === $atts['link'] ) {
 			$image_output = zah_get_attachment_link( $id, $atts['size'], false, false, false, $attr );
 		} elseif ( ! empty( $atts['link'] ) && 'none' === $atts['link'] ) {
@@ -197,13 +197,13 @@ function zah_post_gallery( $nothing, $attr ) {
 		} else {
 			$image_output = zah_get_attachment_link( $id, $atts['size'], true, false, false, $attr );
 		}
-		
+
 		$output .= "$image_output";
 		$i++;
 	}
-	
+
 	$output .= '</section>';
-	
+
 	return $output;
 }
 add_filter( 'post_gallery', 'zah_post_gallery', 10, 2 );
@@ -212,7 +212,7 @@ add_filter( 'post_gallery', 'zah_post_gallery', 10, 2 );
 //media_sideload_image() would be so much better if it simply returned the attachment ID instead of HTML
 function media_sideload_image_return_id( $file, $post_id, $desc = null, $post_data = array() ) {
 	if ( ! empty( $file ) ) {
-		
+
 		$file_array = array();
 		if( !isset($post_data['file_name']) ) {
 			// Set variables for storage, fix file filename for query strings.
@@ -221,7 +221,7 @@ function media_sideload_image_return_id( $file, $post_id, $desc = null, $post_da
 		} else {
 			$file_array['name'] = $post_data['file_name'];
 		}
-		
+
 		// Download file to temp location.
 		$file_array['tmp_name'] = download_url( $file );
 
@@ -236,7 +236,7 @@ function media_sideload_image_return_id( $file, $post_id, $desc = null, $post_da
 		// If error storing permanently, unlink.
 		if ( is_wp_error( $id ) ) {
 			@unlink( $file_array['tmp_name'] );
-			
+
 		}
 
 		return $id;
@@ -280,4 +280,13 @@ function zah_get_attachment_link( $id = 0, $size = 'thumbnail', $permalink = fal
 	 * @param string|bool $text      If string, will be link text. Default false.
 	 */
 	return apply_filters( 'wp_get_attachment_link', "<a href='$url'>$link_text</a>", $id, $size, $permalink, $icon, $text );
+}
+
+function zah_svg_icon( $icon = '' ) {
+	if( !$icon ) {
+		return;
+	}
+	$icon = esc_attr( $icon );
+
+	return '<svg class="icon icon-' . $icon . '" role="img"><use xlink:href="#icon-' . $icon . '"></use></svg>';
 }
