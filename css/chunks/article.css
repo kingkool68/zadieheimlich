@@ -1,0 +1,109 @@
+article {
+	border-top: 0.5em solid #C678BD;
+	border-top-color: rgba(255, 255, 255, 0.5);
+	padding: 3em 0 5em;
+}
+article .inner {
+	max-width: 65em;
+	margin: 0 auto;
+	padding-bottom: 2.5em;
+}
+article:first-of-type {
+	border-top: 0 none;
+}
+article .title {
+	text-align: center;
+}
+article .title a {
+	color: #fff;
+	border-bottom: 0 none;
+	border-radius: 1em;
+	padding: 0.2em 0.5em;
+	display: inline-block;
+}
+article .title a:hover,
+article .title a:focus {
+	background-color: #B47FB6;
+	background-color: rgba(180, 127, 182, 0.5);
+	color: #F8B1FA;
+}
+article .time-stamp {
+	margin-bottom: 2.4em;
+	font-size: 2em;
+	text-align: center;
+}
+article .colon {
+	font-size: 75%;
+	display: inline-block;
+	padding: 0.1em;
+}
+article .am-pm {
+	text-transform: uppercase;
+	font-size: 50%;
+	position: relative;
+	left: -0.15em;
+}
+article.instagram p {
+	margin-bottom: 0.5em;
+}
+article.post .title,
+article.page .title {
+	line-height: 1.3333;
+}
+article.page .title {
+	margin-bottom: 0.937em;
+}
+article.post .time-stamp {
+	line-height: 1.25;
+	margin-top: -0.3em;
+}
+article.post .title a {
+	margin-left: -0.5em;
+}
+@media (max-width:62.5em) { /* 1000px / 16 */
+	article .title {
+		font-size: 3.5em;
+	}
+	article .birthday-rsvp-title {
+		font-size: 2.2em;
+	}
+	article .addtocalendar {
+		font-size: 1em;
+	}
+}
+@media (max-width:51.25em) { /* 820px / 16 */
+	article .title {
+		font-size: 3.2em;
+	}
+	article .birthday-rsvp-title {
+		font-size: 2em;
+	}
+}
+@media (max-width:47.5em) { /* 760px / 16 */
+	article.post .inner p, article.page .inner p {
+		padding-left: 0;
+	}
+}
+@media (max-width:35em) { /* 560px / 16 */
+	article .time-stamp b {
+		display: none;
+	}
+	article.post .title,
+	article.page .title {
+		margin-bottom: 0.3em;
+	}
+	article.post .how-old-was-zadie {
+		display: block;
+		margin-top: 0.3em;
+	}
+	article .birthday-rsvp-title {
+		padding-top: 1em;
+	}
+}
+@media (max-width:30em) { /* 480px / 16 */
+	article.instagram .time {
+		display: block;
+		font-size: 80%;
+		padding-bottom: 0.5em;
+	}
+}

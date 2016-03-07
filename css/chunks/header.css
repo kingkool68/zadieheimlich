@@ -1,0 +1,84 @@
+header {
+	background-color: #fff;
+	background-image: url(/wp-content/themes/zadie-heimlich/img/symphony-light-purple.png);
+	background-repeat: repeat;
+	background-attachment: fixed;
+	padding: 2em 4em 1.5em;
+	position: relative;
+}
+header .site-title {
+	margin-top: 0;
+	text-transform: uppercase;
+	font-size: 8em;
+	float: left;
+}
+header .site-title,
+header .site-title a {
+	border-bottom-width: 0;
+	color: #7b0e7f;
+	display: block;
+}
+header .site-title a {
+	border-radius: 1em;
+	padding: 0 0.3em;
+}
+header .site-title a:hover,
+header .site-title a:focus {
+	background-color: #B47FB6;
+	background-color: rgba(180, 127, 182, 0.5);
+	color: #9B3F9E;
+}
+header .zadies-current-age {
+	color: #BB85BD;
+	float: right;
+	margin-top: 1.6em;
+	font-size: 2.5em;
+	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+}
+@media (max-width:62.5em) { /* 1000px / 16 */
+	header {
+		font-size: 80%;
+	}
+}
+
+@media (max-width:51.25em) { /* 820px / 16 */
+	header {
+		font-size: 68%;
+	}
+}
+
+@media (max-width:44.375em) { /* 710px / 16 */
+	header .site-title,
+	header .zadies-current-age {
+		float: none;
+		text-align: left;
+	}
+	header .zadies-current-age {
+		padding-left: 1em;
+	}
+	header .site-title a {
+		display: inline-block;
+	}
+	header .zadies-current-age {
+		margin-top: 0;
+		text-align: left;
+	}
+}
+
+@media (max-width:40em) { /* 640px / 16 */
+	header .site-title a {
+		padding-top: 0.1em;
+		padding-bottom: 0.1em;
+	}
+}
+@media (max-width:35em) { /* 560px / 16 */
+	header {
+		padding-left: 2em;
+		padding-right: 2em;
+	}
+}
+@media (max-width:30.9375em) { /* 495px / 16 */
+	header .site-title {
+		text-align: center;
+	}
+}

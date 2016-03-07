@@ -1,0 +1,4 @@
+/* Override the video player color defaults */
+article.instagram .mejs-controls .mejs-time-rail .mejs-time-current {
+	background-color: #7b0e7f;
+}

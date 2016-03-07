@@ -1,0 +1,70 @@
+form {
+	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+	max-width: 35em;
+	margin: 0 auto 5.5em;
+}
+fieldset {
+	padding: 1em 0 3.5em;
+}
+label,
+legend {
+	display: block;
+	font-size: 1.8em;
+	padding-bottom: 0.55em;
+}
+form .full {
+	width: 100%;
+}
+form .rounded-button {
+	background-image: none;
+	width: 100%;
+}
+form.rsvp input,
+form.rsvp textarea {
+	-webkit-border-radius: 0.3em;
+	-moz-border-radius: 0.3em;
+	-ms-border-radius: 0.3em;
+	-o-border-radius: 0.3em;
+	border-radius: 0.3em;
+}
+form.rsvp legend {
+	padding-bottom: 0.222em;
+}
+form.rsvp .name input,
+form.rsvp textarea {
+	font-size: 1.8em;
+	padding: 0.2em 0.4em;
+}
+form.rsvp .attendance label,
+form.rsvp .how-many label {
+	float: left;
+	padding: 0 1em;
+}
+form.rsvp .attendance input {
+	margin-right: 0.75em;
+}
+form.rsvp .how-many input {
+	margin-right: 0.25em;
+}
+article .birthday-rsvp-title {
+	font-size: 3em;
+}
+
+/* Add to Calendar Overrides */
+article .addtocalendar {
+	font-size: 1.2em;
+	margin: 0.5em 0 2.5em;
+}
+.addtocalendar .atcb-list,
+.addtocalendar .atcb-item {
+	background-color: #fff;
+}
+.addtocalendar .atcb-item-link {
+	padding: 0.2em 0.5em;
+	border-style: solid;
+}
+@media (max-width:35em) { /* 560px / 16 */
+	article .birthday-rsvp-title {
+		padding-top: 1em;
+	}
+}

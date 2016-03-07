@@ -1,0 +1,50 @@
+html {
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	font-weight: 300;
+	background-color: #7b0e7f;
+	background-image: url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
+	background-repeat: repeat;
+	background-attachment: fixed;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+}
+h1 {
+	font-size: 4.5em;
+	font-weight: 700;
+}
+h2 {
+	font-size: 2em;
+	font-style: italic;
+	margin-bottom: 0.4em;
+}
+a {
+	text-decoration: none;
+	color: #C568C8;
+	border-bottom: 0.15em dotted #C568C8;
+}
+a:hover,
+a:focus {
+	color:#F8B1FA;
+	border-bottom-color:#F8B1FA;
+}
+a:focus {
+	outline-color:#F8B1FA;
+}
+p {
+	font-size:1.8em;
+	line-height:1.5;
+}
+strong,
+b {
+	font-weight:700;
+}
+em,
+i {
+	font-weight:500;
+}

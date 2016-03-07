@@ -1,0 +1,169 @@
+header .menu {
+	position: absolute;
+	right: 2.8em;
+	font-size: 1.6em;
+	text-decoration: none;
+	width: 7em;
+	display: block;
+	border: 0.15em solid #BB85BD;
+	border-radius: 0.7em;
+	color: #BB85BD;
+	text-align: center;
+	padding: 0.5em 0;
+}
+header .menu:hover,
+header .menu:focus {
+	background-color: #B47FB6;
+	background-color: rgba(180, 127, 182, 0.5);
+	color: #9B3F9E;
+}
+.has-js .holder,
+.has-js header .menu,
+.has-js #magic-shield,
+.has-js #menu {
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.35s ease;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	-ms-transform: translate3d(0, 0, 0);
+	-o-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	-o-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+#menu {
+	max-width: 105em;
+	margin: 0 auto;
+}
+.has-js #menu {
+	z-index: 100;
+	width: 28em;
+	position: fixed;
+	top: 0;
+	right: -40em;
+	bottom: 150%;
+	padding: 3.2em 2em 0;
+	background-color: #7b0e7f;
+	background-image: url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
+	-webkit-box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);
+	box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);
+}
+.admin-bar.has-js #menu {
+	padding-top: 6.25em;
+}
+.nav-open #menu {
+	right: 0;
+	bottom: 0;
+}
+#menu .close {
+	display: none;
+	font-size: 2em;
+	border-bottom: 0 none;
+	margin-bottom: 1em;
+}
+.has-js #menu .close {
+	display: block;
+}
+.has-js #menu .alt-text {
+	visibility: hidden;
+}
+#menu .title {
+	font-size: 3.8em;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: #fff;
+	font-style: normal;
+}
+.has-js #menu .title {
+	display: none;
+}
+#menu ul {
+	padding-left: 0;
+}
+#menu li {
+	list-style: none;
+	line-height: 1.25;
+	font-size: 1.2em;
+}
+#menu li:first-child a {
+	border-top: 0;
+}
+#menu li a {
+	border: 0 none;
+	border-top: 0.25em solid #C678BD;
+	border-top-color: rgba(255, 255, 255, 0.5);
+	color: #fff;
+	font-size: 1.6em;
+	padding: 0.5em 0 0.5em 1.5em;
+	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
+	text-align: left;
+	display: block;
+}
+#menu li a:hover,
+#menu li a:focus {
+	background-color: #B47FB6;
+	background-color: rgba(180, 127, 182, 0.5);
+}
+#menu .social-links {
+	padding-top: 0.75em;
+	overflow: auto;
+	height: 100%;
+}
+#menu .social-links a {
+	color: #fff;
+	float: left;
+	width: 33.333%;
+	text-align: center;
+	font-size: 2.5em;
+	border-bottom: 0;
+}
+#menu .social-links a:hover,
+#menu .social-links a:focus {
+	color: #B47FB6;
+	color: rgba(180, 127, 182, 0.5);
+}
+#magic-shield {
+	background-color: rgba(255, 255, 255, 0);
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+}
+.nav-open #magic-shield {
+	z-index: 99;
+	background-color: rgba( 255, 255, 255, 0.75);
+}
+@media (max-width:44.375em) { /* 710px / 16 */
+	header .menu {
+		top: 3em;
+	}
+}
+@media (max-width:38.125em) { /* 610px / 16 */
+	header .menu {
+		top: 7.25em;
+	}
+}
+@media (max-width:35em) { /* 560px / 16 */
+	header .menu {
+		top: 5.75em;
+		font-size: 2em;
+	}
+}
+@media (max-width:30.9375em) { /* 495px / 16 */
+	header .menu {
+		top: 9.75em;
+	}
+}
+@media (max-width:25em) { /* 360px / 16 */
+	header .menu {
+		right: 1em;
+	}
+}
