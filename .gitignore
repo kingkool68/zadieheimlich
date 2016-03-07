@@ -5,3 +5,4 @@
 *.bak
 *.swp
 Thumbs.db
+/node_modules/

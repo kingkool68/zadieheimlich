@@ -1,0 +1,30 @@
+.attachment article {
+	padding-bottom: 1em;
+}
+.attachment .parent-post {
+	padding-bottom: 0.8em;
+}
+.attachment article .title {
+	text-align: center;
+}
+.attachment article .container {
+	margin: 0 auto;
+}
+article.attachment-image p {
+	font-size: 1.5em;
+}
+article.attachment-image img {
+	margin: 2.5em auto 1.5em;
+	display: block;
+	border-width: 0.6em;
+}
+.attachment nav .next {
+	float: right;
+}
+.attachment nav .prev {
+	float: left;
+}
+.attachment .progress {
+	text-align: center;
+	padding-top: 0.3em;
+}

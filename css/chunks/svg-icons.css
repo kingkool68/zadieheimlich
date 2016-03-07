@@ -1,0 +1,17 @@
+/* SVG Icons */
+
+.icon {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	fill: currentColor;
+}
+.icon-facebook {
+	width: 0.857421875em;
+}
+.icon-instagram {
+	width: 0.857421875em;
+}
+.icon-github {
+	width: 0.8571440825859895em;
+}
