@@ -18,12 +18,11 @@ add_action('wp_before_admin_bar_render', 'remove_wp_menu_from_admin_bar', 0);
 //CSS & JS
 function zah_wp_enqueue_scripts() {
 	$suffix = '.min.css';
-	if( isset( $_GET['debug-css'] ) ) {
+	if( isset( $_GET['debug-css'] ) || ( function_exists( 'rh_is_dev' ) && rh_is_dev() ) ) {
 		$suffix = '.css';
 	}
 	wp_register_style( 'zah-google-fonts', 'https://fonts.googleapis.com/css?family=Crete+Round:400,400italic|Open+Sans:300italic,700italic,300,700', array(), NULL, 'all' );
 	wp_register_style( 'zadie-heimlich', get_stylesheet_directory_uri() . '/css/zadie-heimlich' . $suffix, array('zah-google-fonts'), NULL, 'all' );
-
 	wp_enqueue_style( 'zadie-heimlich' );
 
 	wp_register_script( 'post-gallery', get_template_directory_uri() . '/js/post-gallery.js', array('jquery'), NULL, true );
@@ -34,6 +33,8 @@ function zah_wp_enqueue_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'zah_wp_enqueue_scripts' );
+
+// Disable printing the WP Emjoi styles injected into the <head>. They're bundled into our compiled stylesheet.
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 
