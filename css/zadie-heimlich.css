@@ -1,6 +1,12 @@
-/* ../../../../ = the site root */
-/*@import url(../../../../wp-includes/js/mediaelement/mediaelementplayer.min.css);*/
+/*
+Bundle core WordPress stylesheets to save on requests
+../../../../ = the site root
+*/
+@import url(../../../../wp-includes/js/mediaelement/mediaelementplayer.min.css);
+@import url(../../../../wp-includes/js/mediaelement/wp-mediaelement.css);
+@import url(chunks/wp-emoji.css);
 
+/* Zadie Heimlich Chunks */
 @import url(chunks/reset.css);
 @import url(chunks/form-reset.css);
 @import url(chunks/helpers.css);

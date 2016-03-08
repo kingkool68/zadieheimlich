@@ -27,8 +27,14 @@ function zah_wp_enqueue_scripts() {
 	wp_enqueue_style( 'zadie-heimlich' );
 
 	wp_register_script( 'post-gallery', get_template_directory_uri() . '/js/post-gallery.js', array('jquery'), NULL, true );
+
+	// The mediaelement styles are rolled in to the zadie-heimlich.css file via Gulp
+	if( !is_admin() ) {
+		wp_deregister_style('wp-mediaelement');
+	}
 }
 add_action( 'wp_enqueue_scripts', 'zah_wp_enqueue_scripts' );
+remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
 
 function pre_dump() {
