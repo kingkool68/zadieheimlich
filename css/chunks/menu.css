@@ -21,9 +21,9 @@ header .menu:focus {
 .has-js header .menu,
 .has-js #magic-shield,
 .has-js #menu {
-	-webkit-transition: all 0.5s ease;
-	-moz-transition: all 0.5s ease;
-	-o-transition: all 0.5s ease;
+	-webkit-transition: all 0.35s ease;
+	-moz-transition: all 0.35s ease;
+	-o-transition: all 0.35s ease;
 	transition: all 0.35s ease;
 	-webkit-transform: translate3d(0, 0, 0);
 	-moz-transform: translate3d(0, 0, 0);
