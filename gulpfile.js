@@ -1,11 +1,35 @@
 var gulp = require('gulp');
 
 var del = require('del');
-gulp.task('clean:min-css', function () {
-	// Delete all *.min.css files in the CSS directory so we don't get duplicates
+gulp.task('clean:min-css', function() {
+	// Delete all *.min.css files in the css/ directory so we don't get duplicates
 	return del([
 		'css/*.min.css'
 	]);
+});
+gulp.task('clean:min-js', function() {
+	// Delete previously compiled global.min.js files in the js/ directory so we don't get duplicates
+	return del([
+		'js/global.min.js'
+	]);
+});
+
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var wpIncludesDir = '../../../wp-includes/js';
+gulp.task('bundle-js', ['clean:min-js'], function() {
+	return gulp.src([
+		// wpIncludesDir + '/jquery/jquery.js',
+		wpIncludesDir + '/jquery/jquery-migrate.js',
+		wpIncludesDir + '/wp-embed.js',
+		wpIncludesDir + '/wp-emoji-release.min.js',
+		wpIncludesDir + '/mediaelement/mediaelement-and-player.min.js',
+		wpIncludesDir + '/mediaelement/wp-mediaelement.js',
+		'js/menu.js',
+	])
+		.pipe( concat('global.min.js') )
+		.pipe( uglify() )
+		.pipe( gulp.dest('js/') );
 });
 
 var foreach = require('gulp-foreach');
