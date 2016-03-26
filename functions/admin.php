@@ -24,3 +24,9 @@ function zah_clear_dashboard_widgets() {
     }
 }
 add_action( 'wp_dashboard_setup', 'zah_clear_dashboard_widgets', 999 );
+
+function zah_remove_wp_menu_from_admin_bar() {
+	global $wp_admin_bar;
+	$wp_admin_bar->remove_menu( 'wp-logo' );
+}
+add_action( 'wp_before_admin_bar_render', 'zah_remove_wp_menu_from_admin_bar', 0 );
