@@ -16,6 +16,8 @@ class ZAH_Instagram {
 		add_action( 'init', array( $this, 'save_subscriptions' ) );
 		add_action( 'instagram_subscription_tag_zadiealyssa', array( $this, 'instagram_realtime_update' ) );
 		add_action( 'manage_posts_custom_column' , array( $this, 'manage_posts_custom_column' ) );
+		add_action( 'restrict_manage_posts', array( $this, 'add_no_tags_filter' ) );
+		add_action( 'pre_get_posts', array( $this, 'get_posts_with_no_tags' ) );
 
 		add_filter( 'the_content', array( $this, 'the_content' ) );
 		add_filter( 'manage_instagram_posts_columns', array( $this, 'manage_instagram_posts_columns' ) );
@@ -529,8 +531,43 @@ class ZAH_Instagram {
 				echo '<a href="' . esc_url( $post->guid ) . '" target="_blank">@' . get_instagram_username() . '</a>';
 			break;
 		}
+
 	}
 
+	function add_no_tags_filter() {
+		$whitelisted_post_types = array( 'post', 'instagram' );
+		if( !in_array( get_current_screen()->post_type, $whitelisted_post_types ) ) {
+			return;
+		}
+
+		$selected = ( isset( $_GET['tag-filter'] ) && $_GET['tag-filter'] == 'no-tags' );
+		?>
+		<select name="tag-filter">
+			<option value="">All Tags</option>
+			<option value="no-tags" <?php echo selected( $selected ); ?>>No Tags</option>
+		</select>
+		<?php
+	}
+
+	function get_posts_with_no_tags( $query ) {
+		if( !is_admin() || !$query->is_main_query() ) {
+			return;
+		}
+
+		if( !isset( $_GET['tag-filter'] ) || $_GET['tag-filter'] != 'no-tags' ) {
+			return;
+		}
+
+		$tag_ids = get_terms( 'post_tag', array( 'fields' => 'ids' ) );
+		$query->set( 'tax_query', array(
+			array(
+				'taxonomy' => 'post_tag',
+				'field'	=> 'id',
+				'terms'	=> $tag_ids,
+				'operator' => 'NOT IN'
+			)
+		) );
+	}
 
 	/* Quick Sync Dashboard Widget */
 	function wp_dashboard_setup() {
