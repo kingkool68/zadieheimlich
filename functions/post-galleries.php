@@ -183,9 +183,15 @@ function zah_get_post_by_slug( $the_slug ) {
 	return $posts[0];
 }
 
-function zah_post_gallery_get_gallery_posts() {
+function zah_post_gallery_get_gallery_posts( $post_id = 0 ) {
 	if( !is_post_gallery() || !get_query_var('attachment') ) {
 		return array();
+	}
+
+	$post_id = intval( $post_id );
+	if( !$post_id ) {
+		$post = get_post();
+		$post_id = $post->ID;
 	}
 
 	$parent_post = get_page_by_path( get_query_var('original_name'), 'OBJECT', get_post_types() );
@@ -194,17 +200,33 @@ function zah_post_gallery_get_gallery_posts() {
 		'order' => 'ASC',
 		'orderby' => 'post__in',
 		'id' => $parent_post->ID,
+		'ids' => '',
 		'include' => '',
 		'exclude' => '',
-		'numberposts' => -1
+		'numberposts' => -1,
+
+		// For performance. See https://10up.github.io/Engineering-Best-Practices/php/
+		'no_found_rows' => true,
+		'update_post_meta_cache' => false,
+		'update_post_term_cache' => false,
 	);
 
-
-	preg_match('/\[gallery(.+)?\]/i', $parent_post->post_content, $matches);
-	if( $atts = $matches[1] ) {
+	// Find all [gallery] shortcodes in the parent post and process them to see which gallery the current $post belongs to
+	preg_match_all( '/\[gallery(.+)?\]/i', $parent_post->post_content, $matches );
+	foreach( $matches[1] as $atts ) {
 		$atts = shortcode_parse_atts( $atts );
+		$sort_args = wp_parse_args( $atts, $defaults );
+		if( $haystack = $sort_args['ids'] ) {
+			// Make it easier to match IDs while avoiding partial matches. Searching for "1" in "9,10,11" would be a false positive so we normalize everything with a trailing comma.
+			$haystack .= ',';
+			$needle = $post_id . ',';
+			$we_good = strstr( $haystack, $needle );
+			if( $we_good ) {
+				// We found the right gallery, break out of the loop...
+				break;
+			}
+		}
 	}
-	$sort_args = wp_parse_args( $atts, $defaults );
 
 	$post_in = explode( ',', $sort_args['ids'] );
 	$args = array(
