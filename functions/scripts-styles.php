@@ -45,6 +45,15 @@ function zah_wp_enqueue_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'zah_wp_enqueue_scripts' );
 
+/**
+ * Adds a pre-connect <link> element to start establishing a connection for Google Fonts to speed up page rendering.
+ * @param  [type] $html   HTML to be printed
+ * @param  [type] $handle Handle of the style being filtered
+ * @param  [type] $href   href attribute of the style being printed
+ * @param  [type] $media  media attribute of the style being printed
+ * @return [type]         HTML to be printed
+ * @see https://www.igvita.com/2015/08/17/eliminating-roundtrips-with-preconnect/
+ */
 function zah_style_loader_tag( $html, $handle, $href, $media ) {
 	if( $handle != 'zah-google-fonts' ) {
 		return $html;
