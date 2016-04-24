@@ -45,6 +45,15 @@ function zah_wp_enqueue_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'zah_wp_enqueue_scripts' );
 
+function zah_style_loader_tag( $html, $handle, $href, $media ) {
+	if( $handle != 'zah-google-fonts' ) {
+		return $html;
+	}
+
+	return '<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>' . PHP_EOL . $html;
+}
+add_filter( 'style_loader_tag', 'zah_style_loader_tag', 10, 4 );
+
 /**
  * If we're loading a bundled version of scripts then we don't want to load individual JavaScript files for certain script handles.
  * @param  [string] $script_element		<script> element to be rendered
