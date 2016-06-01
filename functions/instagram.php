@@ -77,6 +77,9 @@ class ZAH_Instagram {
 			if ( isset( $_POST['date-limit'] ) ) {
 				$date_limit = strtotime( $_POST['date-limit'] );
 				$from_date = date( get_option( 'date_format' ), $date_limit );
+			} else {
+				$date_limit = strtotime( '2016-05-22' );
+				$from_date = date( get_option( 'date_format' ), $date_limit );
 			}
 		?>
 			<div class="wrap">
@@ -171,11 +174,14 @@ class ZAH_Instagram {
 			$max_id = trim( $_POST['next_max_id'] );
 		}
 		$resp = $this->fetch_instagram_tag( 'zadiealyssa', $max_id );
+		$nodes = $resp->entry_data->TagPage[0]->tag->media->nodes;
+		$last_node = end( $nodes );
 
 		$next_max_id = false;
-		if ( isset( $resp->pagination->next_url ) ) {
-			$next_max_id = $resp->pagination->next_max_tag_id;
+		if ( isset( $last_node->id ) ) {
+			$next_max_id = $last_node->id;
 		}
+
 		$date_limit = 0;
 		if ( isset( $_POST['date-limit'] ) ) {
 			$date_limit = intval( $_POST['date-limit'] );
@@ -187,32 +193,38 @@ class ZAH_Instagram {
 			'skipped' => 0,
 			'total' => 0,
 		);
-		$images = $resp->data;
-		foreach ( $images as $img ) {
+
+		if ( isset( $_POST['next_max_id'] ) &&  $next_max_id == $_POST['next_max_id'] ) {
+			unset( $output['next_max_id'] );
+		}
+
+		foreach ( $nodes as $node ) {
+
 			// If the $img was posted later than our break limit then we need to stop
-			if ( intval( $img->caption->created_time ) < $date_limit ) {
+			if ( intval( $node->date ) < $date_limit ) {
 				unset( $output['next_max_id'] );
 				break;
 			}
 
 			$output['total']++;
 
-			$found = $this->does_instagram_permalink_exist( $img->link );
+			$instagram_link = 'https://www.instagram.com/p/' . $node->code . '/';
+			$found = $this->does_instagram_permalink_exist( $instagram_link );
 
 			if ( $found ) {
 				$output['skipped']++;
 			}
 
 			if ( ! $found ) {
-				$inserted = $this->insert_instagram_post( $img );
+				$inserted = $this->insert_instagram_post( $node );
 				if ( $inserted ) {
 					$wp_permalink = get_permalink( $inserted );
-					$caption = $img->caption->text;
+					$caption = $node->caption;
 
-					$posted = date( 'Y-m-d H:i:s', intval( $img->caption->created_time ) ); // In GMT time
+					$posted = date( 'Y-m-d H:i:s', intval( $node->date ) ); // In GMT time
 
-					$src = $img->images->low_resolution->url;
-					$width = $height = $img->images->low_resolution->width;
+					$src = $node->thumbnail_src;
+					$width = $height = 150;
 
 					$output['imgs'][] = '<a href="' . $wp_permalink . '" target="_blank"><img src="' . $src . '" width="' . $width . '" height="' . $height . '"></a><br>' . $caption . '<br>' . get_date_from_gmt( $posted, 'F j, Y g:i a' );
 				}
@@ -348,38 +360,62 @@ class ZAH_Instagram {
 	/* Helper Functions */
 
 	public function fetch_instagram_tag( $tag = 'zadiealyssa', $max_id = NULL, $min_id = NULL ) {
-		$args = array(
-			'access_token' => $this->get_instagram_access_token(),
-		);
-
+		$args = array();
 		if ( $max_id ) {
-			$args['max_tag_id'] = $max_id;
+			$args['max_id'] = $max_id;
 		}
 
-		$request = add_query_arg( $args, 'https://api.instagram.com/v1/tags/' . $tag . '/media/recent' );
+		$request = add_query_arg( $args, 'https://www.instagram.com/explore/tags/' . $tag . '/' );
+		error_log( $request  );
 		$response = wp_remote_get( $request );
 
-		return json_decode( $response['body'] );
+		// Parse the page response and extract the JSON string.
+		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
+		$arr = explode( 'window._sharedData = ', $response['body'] );
+		$json = explode( ';</script>', $arr[1] );
+		$json = $json[0];
+
+		return json_decode( $json );
 	}
 
-	public function insert_instagram_post( $img ) {
+	public function fetch_single_instagram( $code = '' ) {
+		if ( ! $code ) {
+			return array();
+		}
+
+		$args = array();
+		$request = add_query_arg( $args, 'https://www.instagram.com/p/' . $code . '/' );
+		$response = wp_remote_get( $request );
+
+		// Parse the page response and extract the JSON string.
+		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
+		$arr = explode( 'window._sharedData = ', $response['body'] );
+		$json = explode( ';</script>', $arr[1] );
+		$json = $json[0];
+
+		return json_decode( $json );
+	}
+
+	public function insert_instagram_post( $node ) {
 		if ( ! function_exists( 'download_url' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/admin.php';
 		}
 
-		// Assumes $img is an instagram media object returned from the API
-		$src = $img->images->standard_resolution->url;
+		// error_log( '+++ INSERTING INSTAGRAM +++' );
+		$payload = $this->fetch_single_instagram( $node->code );
+		$img = $payload->entry_data->PostPage[0]->media;
+		// error_log( print_r( $img, true ) );
 
-		$permalink = $img->link;
-		$slug = str_replace( 'http://instagram.com/p/', '', $img->link );
-		$slug = str_replace( '/', '', $slug );
+		$src = $img->display_src;
 
-		$posted = date( 'Y-m-d H:i:s', intval( $img->caption->created_time ) ); // In GMT time
-		$username = $img->caption->from->username;
-		$full_name = $img->caption->from->full_name;
-		$title = preg_replace( '/\s#\w+/i', '', $img->caption->text );
-		$caption = $img->caption->text;
-		$filter = $img->filter;
+		$slug =  $img->code;
+		$permalink = 'https://www.instagram.com/p/' . $slug . '/';
+
+		$posted = date( 'Y-m-d H:i:s', intval( $img->date ) ); // In GMT time
+		$username = $img->owner->username;
+		$full_name = $img->owner->full_name;
+		$caption = $img->caption;
+		$title = preg_replace( '/\s#\w+/i', '', $caption );
 
 		$post = array(
 			'post_title' => $title,
@@ -393,14 +429,15 @@ class ZAH_Instagram {
 		if ( in_array( $username, $this->whitelisted_usernames ) ) {
 			$post['post_status'] = 'publish';
 		}
+
 		$inserted = wp_insert_post( $post );
 
 		if ( ! $inserted ) {
 			return false;
 		}
 
-		if ( $img->type == 'video' ) {
-			$video_file = $img->videos->standard_resolution->url;
+		if ( $img->is_video ) {
+			$video_file = $img->video_url;
 			$tmp = download_url( $video_file );
 
 			$file_array = array();
@@ -434,7 +471,7 @@ class ZAH_Instagram {
 			'alt' => '',
 		);
 		$updated_post_content = wp_get_attachment_image( $attachment_id, 'full', false, $img_attr ) . "\n\n" . $caption;
-		if ( $img->type == 'video' ) {
+		if ( $img->is_video  ) {
 			$video_src = wp_get_attachment_url( $video_id );
 			$poster = wp_get_attachment_image_src( $attachment_id, 'full' );
 			$updated_post_content = '[video src="' . $video_src . '" poster="' . $poster[0] . '"]' . "\n\n" . $caption;
