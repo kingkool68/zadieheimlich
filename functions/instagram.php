@@ -7,13 +7,9 @@ class ZAH_Instagram {
 
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'init', array( $this, 'instagram_subscription_callback' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'wp_ajax_zah_instagram_manual_sync', array( $this, 'manual_sync_ajax_callback' ) );
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
-		add_action( 'wp', array( $this, 'wp' ) );
-		add_action( 'init', array( $this, 'save_subscriptions' ) );
-		add_action( 'instagram_subscription_tag_zadiealyssa', array( $this, 'instagram_realtime_update' ) );
 		add_action( 'manage_posts_custom_column' , array( $this, 'manage_posts_custom_column' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'add_no_tags_filter' ) );
 		add_action( 'pre_get_posts', array( $this, 'get_posts_with_no_tags' ) );
@@ -65,7 +61,6 @@ class ZAH_Instagram {
 
 	function admin_menu() {
 		add_submenu_page( 'edit.php?post_type=instagram', 'Manual Sync', 'Manual Sync', 'manage_options', 'zah-instagram-sync', array( $this, 'manual_sync_submenu' ) );
-		add_submenu_page( 'edit.php?post_type=instagram', 'Subscriptions', 'Subscriptions', 'manage_options', 'zah-instagram-subscriptions', array( $this, 'subscriptions_submenu' ) );
 	}
 
 	function manual_sync_submenu() {
@@ -227,210 +222,6 @@ class ZAH_Instagram {
 		wp_send_json_success( (object) $output );
 	}
 
-	public function subscriptions_submenu() {
-		if( $this->subscription_errors ) {
-			echo '<div class="error">';
-			echo '<p>';
-			echo implode( '</p><p>', $this->subscription_errors );
-			echo '</p>';
-			echo '</div>';
-		}
-		?>
-		<h1>Instagram Subscriptions</h1>
-
-		<form action="<?php echo esc_url( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-subscriptions' ) );?>" method="post">
-		<?php if ( $subscriptions = $this->get_instagram_subscriptions() ) : ?>
-
-			<h2>List of Subscriptions</h2>
-			<table>
-				<thead>
-					<tr>
-						<th></th>
-						<th>Type</th>
-						<th>Object ID</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $subscriptions as $sub ) : ?>
-					<tr>
-						<td><input type="checkbox" name="delete-subscriptions[]" value="<?php echo $sub->id; ?>"></td>
-						<td><?php echo $sub->object; ?></td>
-						<td><?php echo $sub->object_id; ?></td>
-					</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-
-			<p><input type="submit" value="Delete Subscriptions" class="button button-primary"></p>
-
-		<?php endif; ?>
-
-
-		<h2>Add a New Subscription</h2>
-
-		<label for="subscription-type">Type</label>
-		<select id="subscription-type" name="subscription-type">
-			<option value="tag">Tag</option>
-			<option value="user">User</option>
-			<option value="location">Location</option>
-			<option value="geography">Geography</option>
-		</select>
-
-		<input type="text" name="object-id">
-		<?php if( isset($_GET['debug']) ): ?>
-			<input type="hidden" name="debug" value="1">
-		<?php endif; ?>
-
-		<?php wp_nonce_field( 'zah-instagram-subscription', 'zah-instagram-nonce' ); ?>
-
-		<p><input type="submit" value="Add Subscription" class="button button-primary"></p>
-
-		</form>
-
-		<?php if( isset( $_GET['debug'] ) ):
-			$instagram = $this->get_instagram_token();
-			$url_args = array(
-				'client_id' => $instagram->service->key,
-				'client_secret' => $instagram->service->secret,
-			);
-			$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
-		?>
-		<h2>Debugging Helpers</h2>
-		<p><a href="<?php echo $url; ?>">List Subscriptions</a></p>
-		<?php endif;
-	}
-
-	public function save_subscriptions() {
-
-		if( !isset( $_POST['zah-instagram-nonce'] ) || !wp_verify_nonce( $_POST['zah-instagram-nonce'], 'zah-instagram-subscription' ) ) {
-			return;
-		}
-
-		$instagram = $this->get_instagram_token();
-		if ( isset( $_POST['delete-subscriptions'] ) && ! empty( $_POST['delete-subscriptions'] ) ) {
-			$to_delete = array_map('intval', $_POST['delete-subscriptions']);
-
-			$request_args = array(
-				'method' => 'DELETE',
-				'body' => array(),
-			);
-
-			foreach ( $to_delete as $id ) {
-				$url_args = array(
-					'client_id' => $instagram->service->key,
-					'client_secret' => $instagram->service->secret,
-					'id' => $id,
-				);
-				$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
-				$response = wp_remote_request( $url, $request_args );
-				if( isset($_POST['debug']) ) {
-					echo '<pre>';
-					var_dump( $response );
-					echo '</pre>';
-				}
-			}
-		}
-
-		if ( isset( $_POST['object-id'] ) && ! empty( $_POST['object-id'] ) ) {
-
-			$type = $_POST['subscription-type'];
-			$object_id = intval( $_POST['object-id'] );
-			if ( $type == 'tag' ) {
-				$object_id = sanitize_title( $_POST['object-id'] );
-			}
-
-			$response = wp_remote_post( 'https://api.instagram.com/v1/subscriptions/', array(
-				'headers' => array(),
-				'body' => array(
-					'client_id' => $instagram->service->key,
-					'client_secret' => $instagram->service->secret,
-					'object' => $type,
-					'aspect' => 'media',
-					'object_id' => $object_id,
-					'verify_token' => 'zadieVerifyToken',
-					'callback_url' => trailingslashit( get_site_url() ),
-				),
-			) );
-
-			if( isset( $_POST['debug'] ) ) {
-				echo '<pre>';
-				var_dump( $response );
-				echo '</pre>';
-			}
-
-			if( $response['response']['code'] > 399 ) {
-				$payload = json_decode( $response['body'] );
-				$message = '';
-				if( isset( $payload->meta->error_message ) ) {
-					$message .= $payload->meta->error_message;
-				}
-				$message .= ' (' . $response['response']['code'] . ' ' . $response['response']['message'] . ')';
-				$this->subscription_errors[] = $message;
-			}
-		}
-	}
-
-	public function get_instagram_subscriptions() {
-		$instagram = $this->get_instagram_token();
-
-		$args = array(
-			'client_id' => $instagram->service->key,
-			'client_secret' => $instagram->service->secret,
-		);
-
-		$url = add_query_arg( $args, 'https://api.instagram.com/v1/subscriptions' );
-		$response = wp_remote_get( $url );
-
-		// Yay! The request was OK
-		if ( $response['response']['code'] == 200 ) {
-			$output = json_decode( $response['body'] );
-			return $output->data;
-		}
-
-		// Boo! There is some kind of problem
-		$output = new WP_Error( 'get_instagram_subscriptions', 'There was an error getting the instagram subscriptions.', $response );
-		return $output;
-	}
-
-	public function instagram_subscription_callback() {
-		if( !isset( $_GET['instagram-subscription-callback'] ) ) {
-			return;
-		}
-		if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
-			// return;
-		}
-		$update = file_get_contents('php://input');
-	    $updates = json_decode($update);
-
-		/*
-		Sample of $photos...
-
-		[
-		  {
-			"changed_aspect":"media",
-			"object":"tag",
-			"object_id":"nofilter",
-			"time":1423116308,
-			"subscription_id":16698275,
-			"data":{
-
-			}
-		  }
-		]
-		*/
-		if( is_array( $updates ) && !empty( $updates ) ) {
-			foreach( $updates as $update ) {
-				$type = $update->object;
-				$object_id = strtolower( $update->object_id );
-				do_action( 'instagram_subscription_' . $type . '_' . $object_id, $update );
-			}
-		}
-
-		wp_send_json_success();
-
-		die();
-	}
-
 
 	/* Filters */
 	function pre_get_posts( $query ) {
@@ -455,27 +246,8 @@ class ZAH_Instagram {
 		return $content;
 	}
 
-	function wp() {
-		//Echo back the hub.challenge value returned from Instagram to make subscriptions work
-		if ( isset( $_GET['hub_challenge'] ) ) {
-			echo $_GET['hub_challenge'];
-			die();
-		}
-	}
-
 	function set_html_content_type() {
 		return 'text/html';
-	}
-
-	function instagram_realtime_update( $update ) {
-		$resp = $this->fetch_instagram_tag( 'zadiealyssa' );
-		$images = $resp->data;
-		foreach ( $images as $img ) {
-			$found = $this->does_instagram_permalink_exist( $img->link );
-			if ( ! $found ) {
-				$inserted = $this->insert_instagram_post( $img );
-			}
-		}
 	}
 
 	function manage_instagram_posts_columns( $columns ) {
@@ -574,26 +346,6 @@ class ZAH_Instagram {
 
 
 	/* Helper Functions */
-
-	public function get_instagram_token() {
-		// Initialize instance of Keyring
-		$kr = Keyring::init();
-
-		// Get the registered services
-		$services = $kr->get_registered_services();
-
-		// Get our tokens
-		$tokens = $kr->get_token_store()->get_tokens(array(
-			'service' => 'instagram',
-		));
-
-		return $tokens[0];
-	}
-
-	public function get_instagram_access_token() {
-		$instagram = $this->get_instagram_token();
-		return $instagram->token;
-	}
 
 	public function fetch_instagram_tag( $tag = 'zadiealyssa', $max_id = NULL, $min_id = NULL ) {
 		$args = array(
