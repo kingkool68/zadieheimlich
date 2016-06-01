@@ -79,9 +79,6 @@ class ZAH_Instagram {
 			if ( isset( $_POST['date-limit'] ) ) {
 				$date_limit = strtotime( $_POST['date-limit'] );
 				$from_date = date( get_option( 'date_format' ), $date_limit );
-			} else {
-				$date_limit = strtotime( '2016-05-22' );
-				$from_date = date( get_option( 'date_format' ), $date_limit );
 			}
 		?>
 			<div class="wrap">
@@ -430,6 +427,14 @@ class ZAH_Instagram {
 
 		$inserted = wp_insert_post( $post );
 		if ( ! $inserted ) {
+			// Maybe it's because of bad characters in the caption and title? Try again.
+			$post['post_content'] = Encoding::fixUTF8( $caption );
+			$post['post_title'] = Encoding::fixUTF8( $title );
+			$inserted = wp_insert_post( $post );
+		}
+
+		if ( ! $inserted ) {
+			// Welp... we tried.
 			return false;
 		}
 
