@@ -31,6 +31,7 @@ include 'functions/dates.php';
 include 'functions/media.php';
 include 'functions/menu.php';
 include 'functions/post-galleries.php';
+include 'vendor/ForceUTF8/Encoding.php';
 include 'functions/instagram.php';
 include 'functions/rsvp.php';
 include 'functions/infinite-scroll.php';

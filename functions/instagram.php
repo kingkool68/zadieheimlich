@@ -1,5 +1,7 @@
 <?php
 
+use \ForceUTF8\Encoding;
+
 class ZAH_Instagram {
 
 	var $whitelisted_usernames = array( 'naudebynature', 'kingkool68', 'lilzadiebug' );
@@ -366,7 +368,6 @@ class ZAH_Instagram {
 		}
 
 		$request = add_query_arg( $args, 'https://www.instagram.com/explore/tags/' . $tag . '/' );
-		error_log( $request  );
 		$response = wp_remote_get( $request );
 
 		// Parse the page response and extract the JSON string.
@@ -401,20 +402,17 @@ class ZAH_Instagram {
 			require_once ABSPATH . 'wp-admin/includes/admin.php';
 		}
 
-		// error_log( '+++ INSERTING INSTAGRAM +++' );
 		$payload = $this->fetch_single_instagram( $node->code );
 		$img = $payload->entry_data->PostPage[0]->media;
-		// error_log( print_r( $img, true ) );
 
 		$src = $img->display_src;
-
 		$slug =  $img->code;
 		$permalink = 'https://www.instagram.com/p/' . $slug . '/';
 
 		$posted = date( 'Y-m-d H:i:s', intval( $img->date ) ); // In GMT time
 		$username = $img->owner->username;
 		$full_name = $img->owner->full_name;
-		$caption = $img->caption;
+		$caption = Encoding::fixUTF8( $img->caption );
 		$title = preg_replace( '/\s#\w+/i', '', $caption );
 
 		$post = array(
@@ -431,7 +429,6 @@ class ZAH_Instagram {
 		}
 
 		$inserted = wp_insert_post( $post );
-
 		if ( ! $inserted ) {
 			return false;
 		}
