@@ -18,10 +18,12 @@ jQuery(document).ready(function($) {
 	if( $triggerElement.length < 1 ) {
 		return;
 	}
+	var $document = $(document);
+	var $window = $(window);
 	// Set-up some constants.
 	var scrollUsePushStateInstead = false; // Set to true to make the history stack of the browser include every point when posts were loaded. It's kind of annoying.
 	var scrollLoading = false;
-	var triggerOffset = $(document).height() - $triggerElement.offset().top; // The point of this is to do one calculation up front instead of multiple calculations every time the infinite scroll event is triggered.
+	var triggerOffset = $document.height() - $triggerElement.offset().top; // The point of this is to do one calculation up front instead of multiple calculations every time the infinite scroll event is triggered.
 
 	// Keep track of which scripts and styles have been loaded
 	var loadedScripts = [];
@@ -109,95 +111,54 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		if( $(document).height() - triggerOffset < $(document).scrollTop() + $(window).height() ) {
-			var nextURL = $('#pagination').attr('href');
-			if( !nextURL ) {
-				return;
-			}
-
-			$.ajax({
-				type: 'GET',
-				url: nextURL,
-				beforeSend: function() {
-					// Block potentially concurrent requests
-					scrollLoading = true;
-				},
-				success: function(data) {
-					$data = $(data);
-					// We need to manually parse the HTML returned in order to extract <script>, <style>, and <link> elements
-					theNodes = $.parseHTML( data, document, true );
-					$.each( theNodes, function( i, el ) {
-						if( el.nodeName.toUpperCase() === 'SCRIPT' ) {
-							maybeInjectScript( el );
-						}
-						if( el.nodeName.toUpperCase() === 'STYLE' ) {
-							maybeInjectStyle( el );
-						}
-						if( el.nodeName.toUpperCase() === 'LINK' && el.type.toLowerCase() === 'text/css' ) {
-							maybeInjectStyle( el );
-						}
-					});
-
-					//  Take #content from the AJAX'd page and inject it into the current page
-					$('#content').append( $data.find('#content').html() );
-					// Update the #pagination button with the value from the AJAX'd page
-					$('#pagination').before( $data.find('#pagination').outerHTML() ).remove();
-
-					var newPageNum = nextURL.match(/\/page\/(\d+)\//)[1];
-
-					regexp = /\/(pages?)\/([0-9]+)-?([0-9])*\/?$/;
-					var newPath = window.location.href;
-					if( regexp.test(newPath) ) {
-						parts = regexp.exec(newPath);
-						// Assign different parts to more understandable labels. Assume the following example: http://example.com/thing/pages/2-4/
-						matchingPattern = parts[0]; // -> /pages/2-4/
-						pageLabel = parts[1].toLowerCase(); // -> pages
-						pageStart = parts[2]; // -> 2
-						pageEnd = parts[3]; // -> 4
-
-						if( pageEnd > 0 && pageStart == 1 ) {
-							pageStart = pageEnd;
-							pageEnd = false;
-						}
-
-						var blackMagic = new RegExp(matchingPattern, 'ig');
-
-						// We're dealing with /pages/x-x/
-						replacement = '/pages/' + pageStart + '-' + newPageNum + '/';
-						if( !pageEnd ) {
-							// We're dealing with /page/x/ or /pages/x/
-							replacement = '/pages/' + newPageNum + '/';
-							// If we're starting from a page then we need to modify the 'pages' range
-							if( pageLabel == 'page' ) {
-								replacement = '/pages/' + pageStart + '-' + newPageNum + '/';
-							}
-						}
-
-						newPath = newPath.replace( blackMagic, replacement);
-					} else {
-						// There is no /page/ or /pages/ in the URL. We'll assume we can just append a new /pages/ path to the current URL.
-						newPath += 'pages/' + newPageNum + '/';
-					}
-
-					newPath = '/' + newPath.split('/').slice(3).join('/');
-					if( scrollUsePushStateInstead ) {
-						window.history.pushState(null, null, newPath);
-					} else {
-						window.history.replaceState(null, null, newPath);
-					}
-
-					// Unblock more requests (reset loading status)
-					scrollLoading = false;
-
-					// Instantiate media element player for new video and audio elements injected on to the page
-					if( typeof $.fn.mediaelementplayer === 'function' ) {
-						$('video,audio').mediaelementplayer();
-					}
-
-				},
-				dataType: 'html'
-			});
+		if( $document.height() - triggerOffset > $document.scrollTop() + $window.height() ) {
+			// We haven't scrolled deep enough so bail
+			return;
 		}
+		var nextURL = $('#pagination').attr('href');
+		if( !nextURL ) {
+			return;
+		}
+
+		$.ajax({
+			type: 'GET',
+			url: nextURL,
+			beforeSend: function() {
+				// Block potentially concurrent requests
+				scrollLoading = true;
+			},
+			success: function(data) {
+				$data = $(data);
+				// We need to manually parse the HTML returned in order to extract <script>, <style>, and <link> elements
+				theNodes = $.parseHTML( data, document, true );
+				$.each( theNodes, function( i, el ) {
+					if( el.nodeName.toUpperCase() === 'SCRIPT' ) {
+						maybeInjectScript( el );
+					}
+					if( el.nodeName.toUpperCase() === 'STYLE' ) {
+						maybeInjectStyle( el );
+					}
+					if( el.nodeName.toUpperCase() === 'LINK' && el.type.toLowerCase() === 'text/css' ) {
+						maybeInjectStyle( el );
+					}
+				});
+
+				//  Take #content from the AJAX'd page and inject it into the current page
+				$('#content').append( $data.find('#content').html() );
+				// Update the #pagination button with the value from the AJAX'd page
+				$('#pagination').before( $data.find('#pagination').outerHTML() ).remove();
+
+				// Unblock more requests (reset loading status)
+				scrollLoading = false;
+
+				// Instantiate media element player for new video and audio elements injected on to the page
+				if( typeof $.fn.mediaelementplayer === 'function' ) {
+					$('video,audio').mediaelementplayer();
+				}
+
+			},
+			dataType: 'html'
+		});
 	}
 
 	// Initial analysis of the scripts and styles loaded on the page
@@ -208,7 +169,7 @@ jQuery(document).ready(function($) {
 		maybeInjectStyle( style, true );
 	});
 
-	$(window).on('scroll', function() {
+	$window.on('scroll', function() {
 		toInfinityAndBeyond();
 	});
 
