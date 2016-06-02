@@ -18,10 +18,12 @@ jQuery(document).ready(function($) {
 	if( $triggerElement.length < 1 ) {
 		return;
 	}
+	var $document = $(document);
+	var $window = $(window);
 	// Set-up some constants.
 	var scrollUsePushStateInstead = false; // Set to true to make the history stack of the browser include every point when posts were loaded. It's kind of annoying.
 	var scrollLoading = false;
-	var triggerOffset = $(document).height() - $triggerElement.offset().top; // The point of this is to do one calculation up front instead of multiple calculations every time the infinite scroll event is triggered.
+	var triggerOffset = $document.height() - $triggerElement.offset().top; // The point of this is to do one calculation up front instead of multiple calculations every time the infinite scroll event is triggered.
 
 	// Keep track of which scripts and styles have been loaded
 	var loadedScripts = [];
@@ -109,7 +111,7 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		if( $(document).height() - triggerOffset < $(document).scrollTop() + $(window).height() ) {
+		if( $document.height() - triggerOffset < $document.scrollTop() + $window.height() ) {
 			var nextURL = $('#pagination').attr('href');
 			if( !nextURL ) {
 				return;
@@ -165,7 +167,7 @@ jQuery(document).ready(function($) {
 		maybeInjectStyle( style, true );
 	});
 
-	$(window).on('scroll', function() {
+	$window.on('scroll', function() {
 		toInfinityAndBeyond();
 	});
 
