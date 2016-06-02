@@ -143,49 +143,6 @@ jQuery(document).ready(function($) {
 					// Update the #pagination button with the value from the AJAX'd page
 					$('#pagination').before( $data.find('#pagination').outerHTML() ).remove();
 
-					var newPageNum = nextURL.match(/\/page\/(\d+)\//)[1];
-
-					regexp = /\/(pages?)\/([0-9]+)-?([0-9])*\/?$/;
-					var newPath = window.location.href;
-					if( regexp.test(newPath) ) {
-						parts = regexp.exec(newPath);
-						// Assign different parts to more understandable labels. Assume the following example: http://example.com/thing/pages/2-4/
-						matchingPattern = parts[0]; // -> /pages/2-4/
-						pageLabel = parts[1].toLowerCase(); // -> pages
-						pageStart = parts[2]; // -> 2
-						pageEnd = parts[3]; // -> 4
-
-						if( pageEnd > 0 && pageStart == 1 ) {
-							pageStart = pageEnd;
-							pageEnd = false;
-						}
-
-						var blackMagic = new RegExp(matchingPattern, 'ig');
-
-						// We're dealing with /pages/x-x/
-						replacement = '/pages/' + pageStart + '-' + newPageNum + '/';
-						if( !pageEnd ) {
-							// We're dealing with /page/x/ or /pages/x/
-							replacement = '/pages/' + newPageNum + '/';
-							// If we're starting from a page then we need to modify the 'pages' range
-							if( pageLabel == 'page' ) {
-								replacement = '/pages/' + pageStart + '-' + newPageNum + '/';
-							}
-						}
-
-						newPath = newPath.replace( blackMagic, replacement);
-					} else {
-						// There is no /page/ or /pages/ in the URL. We'll assume we can just append a new /pages/ path to the current URL.
-						newPath += 'pages/' + newPageNum + '/';
-					}
-
-					newPath = '/' + newPath.split('/').slice(3).join('/');
-					if( scrollUsePushStateInstead ) {
-						window.history.pushState(null, null, newPath);
-					} else {
-						window.history.replaceState(null, null, newPath);
-					}
-
 					// Unblock more requests (reset loading status)
 					scrollLoading = false;
 
