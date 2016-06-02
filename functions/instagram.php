@@ -1,5 +1,7 @@
 <?php
 
+use \ForceUTF8\Encoding;
+
 class ZAH_Instagram {
 
 	var $whitelisted_usernames = array( 'naudebynature', 'kingkool68', 'lilzadiebug' );
@@ -7,14 +9,9 @@ class ZAH_Instagram {
 
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'init', array( $this, 'instagram_subscription_callback' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'wp_ajax_zah_instagram_manual_sync', array( $this, 'manual_sync_ajax_callback' ) );
-		add_action( 'wp_ajax_zah_instagram_manual_sync_flush_cache', array( $this, 'manual_sync_flush_cache' ) );
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) );
-		add_action( 'wp', array( $this, 'wp' ) );
-		add_action( 'init', array( $this, 'save_subscriptions' ) );
-		add_action( 'instagram_subscription_tag_zadiealyssa', array( $this, 'instagram_realtime_update' ) );
 		add_action( 'manage_posts_custom_column' , array( $this, 'manage_posts_custom_column' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'add_no_tags_filter' ) );
 		add_action( 'pre_get_posts', array( $this, 'get_posts_with_no_tags' ) );
@@ -66,7 +63,6 @@ class ZAH_Instagram {
 
 	function admin_menu() {
 		add_submenu_page( 'edit.php?post_type=instagram', 'Manual Sync', 'Manual Sync', 'manage_options', 'zah-instagram-sync', array( $this, 'manual_sync_submenu' ) );
-		add_submenu_page( 'edit.php?post_type=instagram', 'Subscriptions', 'Subscriptions', 'manage_options', 'zah-instagram-subscriptions', array( $this, 'subscriptions_submenu' ) );
 	}
 
 	function manual_sync_submenu() {
@@ -127,13 +123,6 @@ class ZAH_Instagram {
 						} else {
 							var total = parseInt( $('#total').text() );
 							var skipped = parseInt( $('#skipped').text() );
-							if( total - skipped > 0 ) {
-								// Flush the cache
-								var flushData = {
-									'action': 'zah_instagram_manual_sync_flush_cache'
-								}
-								$.post(ajaxurl, flushData, function(flushResp) {});
-							}
 							$('#stats').after('<p>All done :-)</p>');
 						}
 					});
@@ -184,11 +173,14 @@ class ZAH_Instagram {
 			$max_id = trim( $_POST['next_max_id'] );
 		}
 		$resp = $this->fetch_instagram_tag( 'zadiealyssa', $max_id );
+		$nodes = $resp->entry_data->TagPage[0]->tag->media->nodes;
+		$last_node = end( $nodes );
 
 		$next_max_id = false;
-		if ( isset( $resp->pagination->next_url ) ) {
-			$next_max_id = $resp->pagination->next_max_tag_id;
+		if ( isset( $last_node->id ) ) {
+			$next_max_id = $last_node->id;
 		}
+
 		$date_limit = 0;
 		if ( isset( $_POST['date-limit'] ) ) {
 			$date_limit = intval( $_POST['date-limit'] );
@@ -200,32 +192,38 @@ class ZAH_Instagram {
 			'skipped' => 0,
 			'total' => 0,
 		);
-		$images = $resp->data;
-		foreach ( $images as $img ) {
+
+		if ( isset( $_POST['next_max_id'] ) &&  $next_max_id == $_POST['next_max_id'] ) {
+			unset( $output['next_max_id'] );
+		}
+
+		foreach ( $nodes as $node ) {
+
 			// If the $img was posted later than our break limit then we need to stop
-			if ( intval( $img->caption->created_time ) < $date_limit ) {
+			if ( intval( $node->date ) < $date_limit ) {
 				unset( $output['next_max_id'] );
 				break;
 			}
 
 			$output['total']++;
 
-			$found = $this->does_instagram_permalink_exist( $img->link );
+			$instagram_link = 'https://www.instagram.com/p/' . $node->code . '/';
+			$found = $this->does_instagram_permalink_exist( $instagram_link );
 
 			if ( $found ) {
 				$output['skipped']++;
 			}
 
 			if ( ! $found ) {
-				$inserted = $this->insert_instagram_post( $img );
+				$inserted = $this->insert_instagram_post( $node );
 				if ( $inserted ) {
 					$wp_permalink = get_permalink( $inserted );
-					$caption = $img->caption->text;
+					$caption = $node->caption;
 
-					$posted = date( 'Y-m-d H:i:s', intval( $img->caption->created_time ) ); // In GMT time
+					$posted = date( 'Y-m-d H:i:s', intval( $node->date ) ); // In GMT time
 
-					$src = $img->images->low_resolution->url;
-					$width = $height = $img->images->low_resolution->width;
+					$src = $node->thumbnail_src;
+					$width = $height = 150;
 
 					$output['imgs'][] = '<a href="' . $wp_permalink . '" target="_blank"><img src="' . $src . '" width="' . $width . '" height="' . $height . '"></a><br>' . $caption . '<br>' . get_date_from_gmt( $posted, 'F j, Y g:i a' );
 				}
@@ -233,215 +231,6 @@ class ZAH_Instagram {
 		}
 
 		wp_send_json_success( (object) $output );
-	}
-
-	public function manual_sync_flush_cache() {
-		zah_flush_cache();
-	}
-
-
-	public function subscriptions_submenu() {
-		if( $this->subscription_errors ) {
-			echo '<div class="error">';
-			echo '<p>';
-			echo implode( '</p><p>', $this->subscription_errors );
-			echo '</p>';
-			echo '</div>';
-		}
-		?>
-		<h1>Instagram Subscriptions</h1>
-
-		<form action="<?php echo esc_url( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-subscriptions' ) );?>" method="post">
-		<?php if ( $subscriptions = $this->get_instagram_subscriptions() ) : ?>
-
-			<h2>List of Subscriptions</h2>
-			<table>
-				<thead>
-					<tr>
-						<th></th>
-						<th>Type</th>
-						<th>Object ID</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $subscriptions as $sub ) : ?>
-					<tr>
-						<td><input type="checkbox" name="delete-subscriptions[]" value="<?php echo $sub->id; ?>"></td>
-						<td><?php echo $sub->object; ?></td>
-						<td><?php echo $sub->object_id; ?></td>
-					</tr>
-					<?php endforeach; ?>
-				</tbody>
-			</table>
-
-			<p><input type="submit" value="Delete Subscriptions" class="button button-primary"></p>
-
-		<?php endif; ?>
-
-
-		<h2>Add a New Subscription</h2>
-
-		<label for="subscription-type">Type</label>
-		<select id="subscription-type" name="subscription-type">
-			<option value="tag">Tag</option>
-			<option value="user">User</option>
-			<option value="location">Location</option>
-			<option value="geography">Geography</option>
-		</select>
-
-		<input type="text" name="object-id">
-		<?php if( isset($_GET['debug']) ): ?>
-			<input type="hidden" name="debug" value="1">
-		<?php endif; ?>
-
-		<?php wp_nonce_field( 'zah-instagram-subscription', 'zah-instagram-nonce' ); ?>
-
-		<p><input type="submit" value="Add Subscription" class="button button-primary"></p>
-
-		</form>
-
-		<?php if( isset( $_GET['debug'] ) ):
-			$instagram = $this->get_instagram_token();
-			$url_args = array(
-				'client_id' => $instagram->service->key,
-				'client_secret' => $instagram->service->secret,
-			);
-			$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
-		?>
-		<h2>Debugging Helpers</h2>
-		<p><a href="<?php echo $url; ?>">List Subscriptions</a></p>
-		<?php endif;
-	}
-
-	public function save_subscriptions() {
-
-		if( !isset( $_POST['zah-instagram-nonce'] ) || !wp_verify_nonce( $_POST['zah-instagram-nonce'], 'zah-instagram-subscription' ) ) {
-			return;
-		}
-
-		$instagram = $this->get_instagram_token();
-		if ( isset( $_POST['delete-subscriptions'] ) && ! empty( $_POST['delete-subscriptions'] ) ) {
-			$to_delete = array_map('intval', $_POST['delete-subscriptions']);
-
-			$request_args = array(
-				'method' => 'DELETE',
-				'body' => array(),
-			);
-
-			foreach ( $to_delete as $id ) {
-				$url_args = array(
-					'client_id' => $instagram->service->key,
-					'client_secret' => $instagram->service->secret,
-					'id' => $id,
-				);
-				$url = add_query_arg( $url_args, 'https://api.instagram.com/v1/subscriptions' );
-				$response = wp_remote_request( $url, $request_args );
-				if( isset($_POST['debug']) ) {
-					echo '<pre>';
-					var_dump( $response );
-					echo '</pre>';
-				}
-			}
-		}
-
-		if ( isset( $_POST['object-id'] ) && ! empty( $_POST['object-id'] ) ) {
-
-			$type = $_POST['subscription-type'];
-			$object_id = intval( $_POST['object-id'] );
-			if ( $type == 'tag' ) {
-				$object_id = sanitize_title( $_POST['object-id'] );
-			}
-
-			$response = wp_remote_post( 'https://api.instagram.com/v1/subscriptions/', array(
-				'headers' => array(),
-				'body' => array(
-					'client_id' => $instagram->service->key,
-					'client_secret' => $instagram->service->secret,
-					'object' => $type,
-					'aspect' => 'media',
-					'object_id' => $object_id,
-					'verify_token' => 'zadieVerifyToken',
-					'callback_url' => trailingslashit( get_site_url() ),
-				),
-			) );
-
-			if( isset( $_POST['debug'] ) ) {
-				echo '<pre>';
-				var_dump( $response );
-				echo '</pre>';
-			}
-
-			if( $response['response']['code'] > 399 ) {
-				$payload = json_decode( $response['body'] );
-				$message = '';
-				if( isset( $payload->meta->error_message ) ) {
-					$message .= $payload->meta->error_message;
-				}
-				$message .= ' (' . $response['response']['code'] . ' ' . $response['response']['message'] . ')';
-				$this->subscription_errors[] = $message;
-			}
-		}
-	}
-
-	public function get_instagram_subscriptions() {
-		$instagram = $this->get_instagram_token();
-
-		$args = array(
-			'client_id' => $instagram->service->key,
-			'client_secret' => $instagram->service->secret,
-		);
-
-		$url = add_query_arg( $args, 'https://api.instagram.com/v1/subscriptions' );
-		$response = wp_remote_get( $url );
-
-		// Yay! The request was OK
-		if ( $response['response']['code'] == 200 ) {
-			$output = json_decode( $response['body'] );
-			return $output->data;
-		}
-
-		// Boo! There is some kind of problem
-		$output = new WP_Error( 'get_instagram_subscriptions', 'There was an error getting the instagram subscriptions.', $response );
-		return $output;
-	}
-
-	public function instagram_subscription_callback() {
-		if( !isset( $_GET['instagram-subscription-callback'] ) ) {
-			return;
-		}
-		if( $_SERVER['REQUEST_METHOD'] !== 'POST' ) {
-			// return;
-		}
-		$update = file_get_contents('php://input');
-	    $updates = json_decode($update);
-
-		/*
-		Sample of $photos...
-
-		[
-		  {
-			"changed_aspect":"media",
-			"object":"tag",
-			"object_id":"nofilter",
-			"time":1423116308,
-			"subscription_id":16698275,
-			"data":{
-
-			}
-		  }
-		]
-		*/
-		if( is_array( $updates ) && !empty( $updates ) ) {
-			foreach( $updates as $update ) {
-				$type = $update->object;
-				$object_id = strtolower( $update->object_id );
-				do_action( 'instagram_subscription_' . $type . '_' . $object_id, $update );
-			}
-		}
-
-		wp_send_json_success();
-
-		die();
 	}
 
 
@@ -468,27 +257,8 @@ class ZAH_Instagram {
 		return $content;
 	}
 
-	function wp() {
-		//Echo back the hub.challenge value returned from Instagram to make subscriptions work
-		if ( isset( $_GET['hub_challenge'] ) ) {
-			echo $_GET['hub_challenge'];
-			die();
-		}
-	}
-
 	function set_html_content_type() {
 		return 'text/html';
-	}
-
-	function instagram_realtime_update( $update ) {
-		$resp = $this->fetch_instagram_tag( 'zadiealyssa' );
-		$images = $resp->data;
-		foreach ( $images as $img ) {
-			$found = $this->does_instagram_permalink_exist( $img->link );
-			if ( ! $found ) {
-				$inserted = $this->insert_instagram_post( $img );
-			}
-		}
 	}
 
 	function manage_instagram_posts_columns( $columns ) {
@@ -588,59 +358,59 @@ class ZAH_Instagram {
 
 	/* Helper Functions */
 
-	public function get_instagram_token() {
-		// Initialize instance of Keyring
-		$kr = Keyring::init();
-
-		// Get the registered services
-		$services = $kr->get_registered_services();
-
-		// Get our tokens
-		$tokens = $kr->get_token_store()->get_tokens(array(
-			'service' => 'instagram',
-		));
-
-		return $tokens[0];
-	}
-
-	public function get_instagram_access_token() {
-		$instagram = $this->get_instagram_token();
-		return $instagram->token;
-	}
-
 	public function fetch_instagram_tag( $tag = 'zadiealyssa', $max_id = NULL, $min_id = NULL ) {
-		$args = array(
-			'access_token' => $this->get_instagram_access_token(),
-		);
-
+		$args = array();
 		if ( $max_id ) {
-			$args['max_tag_id'] = $max_id;
+			$args['max_id'] = $max_id;
 		}
 
-		$request = add_query_arg( $args, 'https://api.instagram.com/v1/tags/' . $tag . '/media/recent' );
+		$request = add_query_arg( $args, 'https://www.instagram.com/explore/tags/' . $tag . '/' );
 		$response = wp_remote_get( $request );
 
-		return json_decode( $response['body'] );
+		// Parse the page response and extract the JSON string.
+		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
+		$arr = explode( 'window._sharedData = ', $response['body'] );
+		$json = explode( ';</script>', $arr[1] );
+		$json = $json[0];
+
+		return json_decode( $json );
 	}
 
-	public function insert_instagram_post( $img ) {
+	public function fetch_single_instagram( $code = '' ) {
+		if ( ! $code ) {
+			return array();
+		}
+
+		$args = array();
+		$request = add_query_arg( $args, 'https://www.instagram.com/p/' . $code . '/' );
+		$response = wp_remote_get( $request );
+
+		// Parse the page response and extract the JSON string.
+		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
+		$arr = explode( 'window._sharedData = ', $response['body'] );
+		$json = explode( ';</script>', $arr[1] );
+		$json = $json[0];
+
+		return json_decode( $json );
+	}
+
+	public function insert_instagram_post( $node ) {
 		if ( ! function_exists( 'download_url' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/admin.php';
 		}
 
-		// Assumes $img is an instagram media object returned from the API
-		$src = $img->images->standard_resolution->url;
+		$payload = $this->fetch_single_instagram( $node->code );
+		$img = $payload->entry_data->PostPage[0]->media;
 
-		$permalink = $img->link;
-		$slug = str_replace( 'http://instagram.com/p/', '', $img->link );
-		$slug = str_replace( '/', '', $slug );
+		$src = $img->display_src;
+		$slug =  $img->code;
+		$permalink = 'https://www.instagram.com/p/' . $slug . '/';
 
-		$posted = date( 'Y-m-d H:i:s', intval( $img->caption->created_time ) ); // In GMT time
-		$username = $img->caption->from->username;
-		$full_name = $img->caption->from->full_name;
-		$title = preg_replace( '/\s#\w+/i', '', $img->caption->text );
-		$caption = $img->caption->text;
-		$filter = $img->filter;
+		$posted = date( 'Y-m-d H:i:s', intval( $img->date ) ); // In GMT time
+		$username = $img->owner->username;
+		$full_name = $img->owner->full_name;
+		$caption = Encoding::fixUTF8( $img->caption );
+		$title = preg_replace( '/\s#\w+/i', '', $caption );
 
 		$post = array(
 			'post_title' => $title,
@@ -654,14 +424,22 @@ class ZAH_Instagram {
 		if ( in_array( $username, $this->whitelisted_usernames ) ) {
 			$post['post_status'] = 'publish';
 		}
+
 		$inserted = wp_insert_post( $post );
+		if ( ! $inserted ) {
+			// Maybe it's because of bad characters in the caption and title? Try again.
+			$post['post_content'] = Encoding::fixUTF8( $caption );
+			$post['post_title'] = Encoding::fixUTF8( $title );
+			$inserted = wp_insert_post( $post );
+		}
 
 		if ( ! $inserted ) {
+			// Welp... we tried.
 			return false;
 		}
 
-		if ( $img->type == 'video' ) {
-			$video_file = $img->videos->standard_resolution->url;
+		if ( $img->is_video ) {
+			$video_file = $img->video_url;
 			$tmp = download_url( $video_file );
 
 			$file_array = array();
@@ -695,7 +473,7 @@ class ZAH_Instagram {
 			'alt' => '',
 		);
 		$updated_post_content = wp_get_attachment_image( $attachment_id, 'full', false, $img_attr ) . "\n\n" . $caption;
-		if ( $img->type == 'video' ) {
+		if ( $img->is_video  ) {
 			$video_src = wp_get_attachment_url( $video_id );
 			$poster = wp_get_attachment_image_src( $attachment_id, 'full' );
 			$updated_post_content = '[video src="' . $video_src . '" poster="' . $poster[0] . '"]' . "\n\n" . $caption;
