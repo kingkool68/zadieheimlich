@@ -21,7 +21,7 @@ function zah_redirect_rsvp_vanity_url() {
 	if( !is_404() ) {
 		return;
 	}
-	if( $wp_query->query['name'] == 'rsvp' ) {
+	if( isset( $wp_query->query['name'] ) && $wp_query->query['name'] == 'rsvp' ) {
 		$page = get_page_by_path( 'rsvp-zadies-first-birthday-party' );
 		wp_safe_redirect( get_permalink( $page->ID ) );
 		die();
