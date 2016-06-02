@@ -111,52 +111,54 @@ jQuery(document).ready(function($) {
 			return;
 		}
 
-		if( $document.height() - triggerOffset < $document.scrollTop() + $window.height() ) {
-			var nextURL = $('#pagination').attr('href');
-			if( !nextURL ) {
-				return;
-			}
-
-			$.ajax({
-				type: 'GET',
-				url: nextURL,
-				beforeSend: function() {
-					// Block potentially concurrent requests
-					scrollLoading = true;
-				},
-				success: function(data) {
-					$data = $(data);
-					// We need to manually parse the HTML returned in order to extract <script>, <style>, and <link> elements
-					theNodes = $.parseHTML( data, document, true );
-					$.each( theNodes, function( i, el ) {
-						if( el.nodeName.toUpperCase() === 'SCRIPT' ) {
-							maybeInjectScript( el );
-						}
-						if( el.nodeName.toUpperCase() === 'STYLE' ) {
-							maybeInjectStyle( el );
-						}
-						if( el.nodeName.toUpperCase() === 'LINK' && el.type.toLowerCase() === 'text/css' ) {
-							maybeInjectStyle( el );
-						}
-					});
-
-					//  Take #content from the AJAX'd page and inject it into the current page
-					$('#content').append( $data.find('#content').html() );
-					// Update the #pagination button with the value from the AJAX'd page
-					$('#pagination').before( $data.find('#pagination').outerHTML() ).remove();
-
-					// Unblock more requests (reset loading status)
-					scrollLoading = false;
-
-					// Instantiate media element player for new video and audio elements injected on to the page
-					if( typeof $.fn.mediaelementplayer === 'function' ) {
-						$('video,audio').mediaelementplayer();
-					}
-
-				},
-				dataType: 'html'
-			});
+		if( $document.height() - triggerOffset > $document.scrollTop() + $window.height() ) {
+			// We haven't scrolled deep enough so bail
+			return;
 		}
+		var nextURL = $('#pagination').attr('href');
+		if( !nextURL ) {
+			return;
+		}
+
+		$.ajax({
+			type: 'GET',
+			url: nextURL,
+			beforeSend: function() {
+				// Block potentially concurrent requests
+				scrollLoading = true;
+			},
+			success: function(data) {
+				$data = $(data);
+				// We need to manually parse the HTML returned in order to extract <script>, <style>, and <link> elements
+				theNodes = $.parseHTML( data, document, true );
+				$.each( theNodes, function( i, el ) {
+					if( el.nodeName.toUpperCase() === 'SCRIPT' ) {
+						maybeInjectScript( el );
+					}
+					if( el.nodeName.toUpperCase() === 'STYLE' ) {
+						maybeInjectStyle( el );
+					}
+					if( el.nodeName.toUpperCase() === 'LINK' && el.type.toLowerCase() === 'text/css' ) {
+						maybeInjectStyle( el );
+					}
+				});
+
+				//  Take #content from the AJAX'd page and inject it into the current page
+				$('#content').append( $data.find('#content').html() );
+				// Update the #pagination button with the value from the AJAX'd page
+				$('#pagination').before( $data.find('#pagination').outerHTML() ).remove();
+
+				// Unblock more requests (reset loading status)
+				scrollLoading = false;
+
+				// Instantiate media element player for new video and audio elements injected on to the page
+				if( typeof $.fn.mediaelementplayer === 'function' ) {
+					$('video,audio').mediaelementplayer();
+				}
+
+			},
+			dataType: 'html'
+		});
 	}
 
 	// Initial analysis of the scripts and styles loaded on the page
