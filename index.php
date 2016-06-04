@@ -1,5 +1,5 @@
 <?php get_header(); ?>
-
+	<?php do_action( 'zah_before_content', $post ); ?>
 	<div id="content">
 	<?php
 	if ( have_posts() ) :
