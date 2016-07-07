@@ -63,6 +63,7 @@ class ZAH_Instagram {
 
 	function admin_menu() {
 		add_submenu_page( 'edit.php?post_type=instagram', 'Manual Sync', 'Manual Sync', 'manage_options', 'zah-instagram-sync', array( $this, 'manual_sync_submenu' ) );
+		add_submenu_page( 'edit.php?post_type=instagram', 'Private Sync', 'Private Sync', 'manage_options', 'zah-instagram-private-sync', array( $this, 'private_sync_submenu' ) );
 	}
 
 	function manual_sync_submenu() {
@@ -233,6 +234,65 @@ class ZAH_Instagram {
 		wp_send_json_success( (object) $output );
 	}
 
+	function private_sync_submenu() {
+
+		$result = '';
+		if ( isset( $_POST['instagram-source'] ) && ! empty( $_POST['instagram-source'] ) && check_admin_referer( 'zah-instagram-private-sync' ) ) {
+			$instagram_source = wp_unslash( $_POST['instagram-source'] );
+			$json = $this->get_instagram_json_from_html( $instagram_source );
+			$node = $json->entry_data->PostPage[0]->media;
+
+			$instagram_link = 'https://www.instagram.com/p/' . $node->code . '/';
+			$found = $this->does_instagram_permalink_exist( $instagram_link );
+
+			$inserted = $this->insert_instagram_post( $node, $force_publish_status = true );
+			if ( $inserted ) {
+				$wp_permalink = get_permalink( $inserted );
+				$caption = $node->caption;
+
+				$posted = date( 'Y-m-d H:i:s', intval( $node->date ) ); // In GMT time
+
+				$src = $node->display_src;
+				$width = 150;
+				$height = '';
+				if ( isset( $node->thumbnail_src ) ) {
+					$width = $height = 150;
+					$src = $node->thumbnail_src;
+				}
+
+				$status = 'Success!';
+				if ( $found ) {
+					$status = 'WARNING: This post already exists!';
+				}
+
+				$result .= '<h2>' . $status . '</h2>';
+				$result .= '<p><a href="' . $wp_permalink . '" target="_blank"><img src="' . $src . '" width="' . $width . '" height="' . $height . '"></a><br>' . $caption . '<br>' . get_date_from_gmt( $posted, 'F j, Y g:i a' ) . '</p>';
+				$result .= '<hr>';
+			}
+		}
+	?>
+		<style>
+			#instagram-source {
+				display: block;
+				max-width:800px;
+				width: 95%;
+			}
+		</style>
+		<div class="wrap">
+			<?php if ( $result ) { echo $result; } ?>
+
+			<h1>Private Sync</h1>
+			<p>Paste the HTML source of the private Instagram post to scrape and sync it with this site.</p>
+			<form action="<?php echo esc_url( admin_url( 'edit.php?post_type=instagram&page=zah-instagram-private-sync' ) );?>" method="post">
+				<?php wp_nonce_field( 'zah-instagram-private-sync' ); ?>
+				<label for="instagram-source">HTML Source</label>
+				<textarea name="instagram-source" id="instagram-source" rows="5"></textarea>
+				<?php submit_button( 'Sync', 'primary' ); ?>
+			</form>
+		</div>
+	<?php
+	}
+
 
 	/* Filters */
 	function pre_get_posts( $query ) {
@@ -358,6 +418,16 @@ class ZAH_Instagram {
 
 	/* Helper Functions */
 
+	public function get_instagram_json_from_html( $html = '' ) {
+		// Parse the page response and extract the JSON string.
+		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
+		$arr = explode( 'window._sharedData = ', $html );
+		$json = explode( ';</script>', $arr[1] );
+		$json = $json[0];
+
+		return json_decode( $json );
+	}
+
 	public function fetch_instagram_tag( $tag = 'zadiealyssa', $max_id = NULL, $min_id = NULL ) {
 		$args = array();
 		if ( $max_id ) {
@@ -367,13 +437,7 @@ class ZAH_Instagram {
 		$request = add_query_arg( $args, 'https://www.instagram.com/explore/tags/' . $tag . '/' );
 		$response = wp_remote_get( $request );
 
-		// Parse the page response and extract the JSON string.
-		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
-		$arr = explode( 'window._sharedData = ', $response['body'] );
-		$json = explode( ';</script>', $arr[1] );
-		$json = $json[0];
-
-		return json_decode( $json );
+		return $this->get_instagram_json_from_html( $response['body'] );
 	}
 
 	public function fetch_single_instagram( $code = '' ) {
@@ -385,22 +449,23 @@ class ZAH_Instagram {
 		$request = add_query_arg( $args, 'https://www.instagram.com/p/' . $code . '/' );
 		$response = wp_remote_get( $request );
 
-		// Parse the page response and extract the JSON string.
-		// via https://github.com/raiym/instagram-php-scraper/blob/849f464bf53f84a93f86d1ecc6c806cc61c27fdc/src/InstagramScraper/Instagram.php#L32
-		$arr = explode( 'window._sharedData = ', $response['body'] );
-		$json = explode( ';</script>', $arr[1] );
-		$json = $json[0];
-
-		return json_decode( $json );
+		return $this->get_instagram_json_from_html( $response['body'] );
 	}
 
-	public function insert_instagram_post( $node ) {
+	public function insert_instagram_post( $node, $force_publish_status = false ) {
 		if ( ! function_exists( 'download_url' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/admin.php';
 		}
 
-		$payload = $this->fetch_single_instagram( $node->code );
-		$img = $payload->entry_data->PostPage[0]->media;
+		$img = $node;
+		// Check to see if $node is already a PostPage object. If not, try and fetch a single instagram post.
+		if ( ! isset( $node->owner->is_private ) ) {
+			$payload = $this->fetch_single_instagram( $node->code );
+			if ( empty( $payload ) || ! $payload ) {
+				return;
+			}
+			$img = $payload->entry_data->PostPage[0]->media;
+		}
 
 		$src = $img->display_src;
 		$slug =  $img->code;
@@ -421,7 +486,7 @@ class ZAH_Instagram {
 			'post_date_gmt' => $posted,
 			'guid' => $permalink,
 		);
-		if ( in_array( $username, $this->whitelisted_usernames ) ) {
+		if ( in_array( $username, $this->whitelisted_usernames ) || $force_publish_status ) {
 			$post['post_status'] = 'publish';
 		}
 
