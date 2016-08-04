@@ -255,54 +255,54 @@ function zah_post_gallery_get_gallery_posts( $post_id = 0 ) {
 }
 
 function zah_post_gallery_get_nav() {
-
-	$output = wp_cache_get( 'zah_post_gallery_get_nav' );
-	if( !$output ) {
-		$posts = zah_post_gallery_get_gallery_posts();
-		if( !$posts ) {
-			return array();
-		}
-
-		$total_attachments = count( $posts->attachments );
-		$count = 0;
-		$current = $next = $prev = 0;
-		$post_id = get_the_ID();
-		$attachments = array();
-		foreach( $posts->attachments as $attachment ) {
-			if( $attachment->ID == $post_id ) {
-				$current = $count;
-				$next = $count + 1;
-				$prev = $count - 1;
-				if( $prev < 0 ) {
-					$prev = $total_attachments - 1;
-				}
-				if( $next >= $total_attachments ) {
-					$next = 0;
-				}
-			}
-
-			$attachments[] = $attachment->post_gallery_url;
-
-			$count++;
-		}
-
-		//pre_dump( $posts->attachments, $current, $next, $prev );
-
-		$parent_permalink = get_permalink( $posts->parent_id );
-		$next_slug = $posts->attachments[ $next ]->post_name;
-		$prev_slug = $posts->attachments[ $prev ]->post_name;
-
-		$output = (object) array(
-			'attachments' => $attachments,
-			'parent' => get_post( $posts->parent_id ),
-			'next_permalink' => zah_post_gallery_link( $posts->parent_id, $next_slug ),
-			'prev_permalink' => zah_post_gallery_link( $posts->parent_id, $prev_slug ),
-			'total' => $total_attachments,
-			'current' => $current + 1
-		);
-
-		wp_cache_set( 'zah_post_gallery_get_nav', $output );
+	global $wp;
+	if( isset( $wp->zah_post_gallery_get_nav ) ) {
+		return $wp->zah_post_gallery_get_nav;
 	}
+
+	$posts = zah_post_gallery_get_gallery_posts();
+	if( !$posts ) {
+		return array();
+	}
+
+	$total_attachments = count( $posts->attachments );
+	$count = 0;
+	$current = $next = $prev = 0;
+	$post_id = get_the_ID();
+	$attachments = array();
+	foreach( $posts->attachments as $attachment ) {
+		if( $attachment->ID == $post_id ) {
+			$current = $count;
+			$next = $count + 1;
+			$prev = $count - 1;
+			if( $prev < 0 ) {
+				$prev = $total_attachments - 1;
+			}
+			if( $next >= $total_attachments ) {
+				$next = 0;
+			}
+		}
+
+		$attachments[] = $attachment->post_gallery_url;
+
+		$count++;
+	}
+
+	//pre_dump( $posts->attachments, $current, $next, $prev );
+
+	$parent_permalink = get_permalink( $posts->parent_id );
+	$next_slug = $posts->attachments[ $next ]->post_name;
+	$prev_slug = $posts->attachments[ $prev ]->post_name;
+
+	$output = (object) array(
+		'attachments' => $attachments,
+		'parent' => get_post( $posts->parent_id ),
+		'next_permalink' => zah_post_gallery_link( $posts->parent_id, $next_slug ),
+		'prev_permalink' => zah_post_gallery_link( $posts->parent_id, $prev_slug ),
+		'total' => $total_attachments,
+		'current' => $current + 1
+	);
+	$wp->zah_post_gallery_get_nav = $output;
 
 	return $output;
 }
