@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Zadie Heimlich's Site",
   "main": "gulpfile.js",
-  "dependencies": {},
+  "dependencies": {
+    "del": "^2.2.2"
+  },
   "devDependencies": {
     "del": "^2.2.0",
     "gulp": "^3.9.1",

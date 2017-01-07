@@ -49,7 +49,7 @@ header .menu:focus {
 	bottom: 150%;
 	padding: 3.2em 2em 0;
 	background-color: #7b0e7f;
-	background-image: url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
+	background-image: url(../../img/symphony-purple.png);
 	-webkit-box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);
 	-moz-box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);
 	box-shadow: 1em 0 2.5em 1.3em rgba(0, 0, 0, 0.5);

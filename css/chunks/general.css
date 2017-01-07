@@ -2,7 +2,7 @@ html {
 	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	background-color: #7b0e7f;
-	background-image: url(/wp-content/themes/zadie-heimlich/img/symphony-purple.png);
+	background-image: url(../../img/symphony-purple.png);
 	background-repeat: repeat;
 	background-attachment: fixed;
 }
