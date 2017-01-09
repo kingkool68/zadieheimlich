@@ -524,6 +524,9 @@ class ZAH_Instagram {
 			if ( is_wp_error( $video_id ) ) {
 				@unlink( $file_array['tmp_name'] );
 			}
+
+			// Auto-tag this Instagram post as a video
+			wp_set_object_terms( $inserted, 'video', 'category' );
 		}
 
 		$attachment_data = array(
