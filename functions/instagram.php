@@ -533,28 +533,15 @@ class ZAH_Instagram {
 			'file_name' => $slug . '.jpg',
 		);
 		$attachment_id = media_sideload_image_return_id( $src, $inserted, $caption, $attachment_data );
-		$img_attr = array(
-			'class' => 'aligncenter from-instagram',
-			'alt' => '',
-		);
-		$updated_post_content = wp_get_attachment_image( $attachment_id, 'full', false, $img_attr ) . "\n\n" . $caption;
-		if ( $img->is_video  ) {
-			$video_src = wp_get_attachment_url( $video_id );
-			$poster = wp_get_attachment_image_src( $attachment_id, 'full' );
-			$updated_post_content = '[video src="' . $video_src . '" poster="' . $poster[0] . '"]' . "\n\n" . $caption;
-		}
-
-		$updated_post = array(
-			'ID' => $inserted,
-			'post_content' => $updated_post_content,
-			'guid' => $permalink,
-		);
-		wp_update_post( $updated_post );
-
 		update_post_meta( $inserted, 'instagram_username', $username );
 
 		// Set the featured image
 		add_post_meta( $inserted, '_thumbnail_id', $attachment_id );
+
+		// If we have a video id, store it as post meta
+		if ( $video_id ) {
+			add_post_meta( $inserted, '_video_id', $video_id );
+		}
 
 		if ( $post['post_status'] != 'publish' ) {
 			// Send an email so we can approve the new photo ASAP!
