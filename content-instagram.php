@@ -13,6 +13,7 @@
 			</time>
 		</h1>
 		<h2 class="time-stamp"><?php echo how_old_was_zadie(); ?></h2>
+		<?php zah_the_instagram_media(); ?>
 		<?php the_content(); ?>
 
 		<p class="via">(via <a href="<?php echo $post->guid; ?>">@<?php echo get_instagram_username(); ?></a>)</p>
