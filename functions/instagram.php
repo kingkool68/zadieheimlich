@@ -503,6 +503,7 @@ class ZAH_Instagram {
 			return false;
 		}
 
+		$video_id = false;
 		if ( $img->is_video ) {
 			$video_file = $img->video_url;
 			$tmp = download_url( $video_file );
