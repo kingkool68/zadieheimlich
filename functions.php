@@ -36,4 +36,4 @@ include 'functions/instagram.php';
 include 'functions/rsvp.php';
 include 'functions/infinite-scroll.php';
 include 'functions/on-this-day.php';
-include 'functions/cli-commands.php';
+# include 'functions/cli-commands.php';
