@@ -290,3 +290,34 @@ function zah_svg_icon( $icon = '' ) {
 
 	return '<svg class="icon icon-' . $icon . '" role="img"><use xlink:href="#icon-' . $icon . '"></use></svg>';
 }
+
+function zah_the_instagram_media( $post_id = 0 ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		$post_id = '';
+	}
+	$post = get_post( $post_id );
+	$featured_image_id = get_post_thumbnail_id( $post->ID );
+	$featured_video_id = get_post_meta( $post->ID, '_video_id', true );
+	if ( $featured_video_id ) {
+		$video_src = wp_get_attachment_url( $featured_video_id );
+		$poster = wp_get_attachment_image_src( $featured_image_id, 'full' );
+		if ( ! empty( $poster[0] ) ) {
+			$poster = $poster[0];
+		}
+		if ( $video_src && $poster ) {
+			$args = array(
+				'src' => $video_src,
+				'poster' => $poster,
+			);
+			echo wp_video_shortcode( $args );
+		return;
+		}
+	}
+
+	$img_attrs = array(
+		'class' => 'aligncenter from-instagram',
+		'alt' => '',
+	);
+	echo wp_get_attachment_image( $featured_image_id, 'full', false, $img_attrs );
+}
