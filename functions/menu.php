@@ -11,7 +11,7 @@ register_nav_menus(
 function zah_menu_wp_enqueue_scripts() {
 	wp_enqueue_script( 'zah-menu', get_template_directory_uri() . '/js/menu.js', array('jquery'), NULL, true );
 }
-add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
+// add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
 
 /**
  * Output the markup for the menu in the footer of the site using a custom action called 'zah_footer'

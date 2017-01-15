@@ -43,7 +43,15 @@
 	<header class="clearfix">
 		<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
 		<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
-		<a href="#menu" class="menu">Menu</a>
 	</header>
+
+	<nav id="new-menu">
+		<ul>
+			<li><a href="#">Videos</a></li>
+			<li><a href="#">On This Day</a></li>
+			<li><a href="#">Galleries</a></li>
+			<li><a href="#">More</a></li>
+		</ul>
+	</nav>
 
 	<div class="holder">
