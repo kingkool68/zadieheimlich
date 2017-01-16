@@ -46,12 +46,15 @@
 	</header>
 
 	<nav id="new-menu" class="new-menu">
-		<ul>
-			<li><a href="#">Videos</a></li>
-			<li><a href="#">On This Day</a></li>
-			<li><a href="#">Galleries</a></li>
-			<li><a href="#">More +</a></li>
-		</ul>
+		<?php
+		$args = array(
+			'theme_location' => 'main-menu',
+			'container' => false,
+			'menu_class' => false,
+			'menu_id' => false,
+		);
+		wp_nav_menu( $args );
+		?>
 	</nav>
 
 	<div class="holder">
