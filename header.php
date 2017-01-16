@@ -45,12 +45,12 @@
 		<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
 	</header>
 
-	<nav id="new-menu">
+	<nav id="new-menu" class="new-menu">
 		<ul>
 			<li><a href="#">Videos</a></li>
 			<li><a href="#">On This Day</a></li>
 			<li><a href="#">Galleries</a></li>
-			<li><a href="#">More</a></li>
+			<li><a href="#">More +</a></li>
 		</ul>
 	</nav>
 

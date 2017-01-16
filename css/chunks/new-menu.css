@@ -1,26 +1,27 @@
-#new-menu {
+.new-menu {
 	clear: both;
 	padding-bottom: 0;
-	background-color: #7b0e7f;
 	padding: 0 4em;
+	background-color: #B47FB6;
+	background-color: rgba(180, 127, 182, 0.5);
 }
-#new-menu ul {
+.new-menu ul {
 	overflow: auto;
 	height: 100%;
 }
-#new-menu li {
+.new-menu li {
 	float: left;
 	list-style: none;
 	font-size: 1.8em;
 }
-#new-menu a {
+.new-menu a {
 	display: block;
 	text-align: center;
 	padding: 0.6em 2em;
 	border-bottom: none;
 	color: #fff;
 }
-#new-menu a:hover,
-#new-menu a:focus {
-	background-color: #98469B;
+.new-menu a:hover,
+.new-menu a:focus {
+	background-color: #7b0e7f;
 }
