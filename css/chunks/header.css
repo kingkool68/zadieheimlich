@@ -35,17 +35,6 @@ header .zadies-current-age {
 	font-size: 2.5em;
 	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
 }
-@media (max-width:62.5em) { /* 1000px / 16 */
-	header {
-		font-size: 80%;
-	}
-}
-
-@media (max-width:51.25em) { /* 820px / 16 */
-	header {
-		font-size: 68%;
-	}
-}
 
 @media (max-width:44.375em) { /* 710px / 16 */
 	header .site-title,
@@ -56,12 +45,16 @@ header .zadies-current-age {
 	header .zadies-current-age {
 		padding-left: 1em;
 	}
+	header .site-title {
+		font-size: 3em;
+	}
 	header .site-title a {
 		display: inline-block;
 	}
 	header .zadies-current-age {
 		margin-top: 0;
 		text-align: left;
+		font-size: 1.6em;
 	}
 }
 

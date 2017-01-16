@@ -25,3 +25,17 @@
 .new-menu a:focus {
 	background-color: #7b0e7f;
 }
+
+@media( max-width: 36.25em ) { /* 580px / 16 */
+	.new-menu {
+		padding: 0;
+	}
+	.new-menu li {
+		float: left;
+		font-size: 1.4em;
+	}
+	.new-menu a {
+		padding-left: 0.75em;
+		padding-right: 0.75em;
+	}
+}
