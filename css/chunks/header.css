@@ -3,7 +3,7 @@ header {
 	background-image: url(../../img/symphony-light-purple.png);
 	background-repeat: repeat;
 	background-attachment: fixed;
-	padding: 2em 4em 1.5em;
+	padding: 0.5em 4em;
 	position: relative;
 }
 header .site-title {
