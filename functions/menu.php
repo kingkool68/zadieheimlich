@@ -12,7 +12,7 @@ register_nav_menus(
 function zah_menu_wp_enqueue_scripts() {
 	wp_enqueue_script( 'zah-menu', get_template_directory_uri() . '/js/menu.js', array('jquery'), NULL, true );
 }
-// add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
+add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
 
 /**
  * Output the markup for the menu in the footer of the site using a custom action called 'zah_footer'
@@ -50,7 +50,7 @@ function zah_filter_nav_menu_items( $items, $args ) {
 	if ( ! is_object( $args ) || ! isset( $args->theme_location ) || $args->theme_location != 'main-menu' ) {
 		return $items;
 	}
-	$items .= '<li><a href="#">More +</a></li>';
+	$items .= '<li><a href="#" class="more-nav">More +</a></li>';
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'zah_filter_nav_menu_items', 10, 2 );

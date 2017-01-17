@@ -46,7 +46,6 @@ header .menu:focus {
 	position: fixed;
 	top: 0;
 	right: -40em;
-	bottom: 150%;
 	padding: 3.2em 2em 0;
 	background-color: #7b0e7f;
 	background-image: url(../../img/symphony-purple.png);
@@ -59,7 +58,6 @@ header .menu:focus {
 }
 .nav-open #menu {
 	right: 0;
-	bottom: 0;
 }
 #menu .close {
 	display: none;

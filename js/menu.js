@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 	}
 
 	// When the Menu button is clicked, open the menu.
-	$('header .menu').click(function(e) {
+	$('nav .more-nav').click(function(e) {
 		e.preventDefault();
 		$body = $('body');
 		$body.toggleClass('nav-open');
@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 		if( !$body.is('.nav-open') ) {
 			// If the event was a keyboard event then we can set focus back to the Menu button for a better flow for those navigating via keyboard.
 			if( e.keyCode ) {
-				$('header .menu').focus();
+				$('nav .more-nav').focus();
 			}
 			// The menu is closed, disengage the bindEscapeKey() function
 			$body.off('keyup.bindEscape', bindEscapeKey );
