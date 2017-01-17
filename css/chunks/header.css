@@ -3,8 +3,11 @@ header {
 	background-image: url(../../img/symphony-light-purple.png);
 	background-repeat: repeat;
 	background-attachment: fixed;
-	padding: 0.5em 4em;
+	padding: 0.5em 0;
 	position: relative;
+}
+header .holder {
+	padding-bottom: 0;
 }
 header .site-title {
 	margin-top: 0;
@@ -35,8 +38,25 @@ header .zadies-current-age {
 	font-size: 2.5em;
 	font-family: 'Crete Round', Arial, Helvetica, sans-serif;
 }
-
-@media (max-width:44.375em) { /* 710px / 16 */
+@media(max-width: 62.5em) { /* 1000px / 16 */
+	header {
+		font-size: 75%;
+	}
+}
+@media (max-width:48.75em) { /* 780px / 16 */
+	header {
+		font-size: 70%;
+	}
+}
+@media (max-width:43.75em) { /* 700px / 16 */
+	header {
+		font-size: 65%;
+	}
+}
+@media (max-width:40em) { /* 640px / 16 */
+	header {
+		font-size: 100%;
+	}
 	header .site-title,
 	header .zadies-current-age {
 		float: none;
@@ -54,24 +74,6 @@ header .zadies-current-age {
 	header .zadies-current-age {
 		margin-top: 0;
 		text-align: left;
-		font-size: 1.6em;
-	}
-}
-
-@media (max-width:40em) { /* 640px / 16 */
-	header .site-title a {
-		padding-top: 0.1em;
-		padding-bottom: 0.1em;
-	}
-}
-@media (max-width:35em) { /* 560px / 16 */
-	header {
-		padding-left: 2em;
-		padding-right: 2em;
-	}
-}
-@media (max-width:30.9375em) { /* 495px / 16 */
-	header .site-title {
-		text-align: center;
+		font-size: 1.5em;
 	}
 }
