@@ -41,8 +41,10 @@
 	<?php include get_template_directory() . '/svg/zadie-heimlich-icons.svg'; ?>
 	<a id="top" href="#content">Skip to Content</a>
 	<header class="clearfix">
-		<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
-		<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
+		<div class="holder">
+			<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
+			<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
+		</div>
 	</header>
 
 	<nav id="new-menu" class="new-menu">
@@ -50,7 +52,7 @@
 		$args = array(
 			'theme_location' => 'main-menu',
 			'container' => false,
-			'menu_class' => false,
+			'menu_class' => 'holder',
 			'menu_id' => false,
 		);
 		wp_nav_menu( $args );
