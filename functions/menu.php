@@ -19,7 +19,7 @@ add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
  */
 function zah_menu_footer() {
 ?>
-	<nav id="menu">
+	<nav id="more-menu" class="more-menu">
 		<section>
 			<h2 class="title">Main Menu</h2>
 			<a href="#" class="close">
@@ -50,7 +50,7 @@ function zah_filter_nav_menu_items( $items, $args ) {
 	if ( ! is_object( $args ) || ! isset( $args->theme_location ) || $args->theme_location != 'main-menu' ) {
 		return $items;
 	}
-	$items .= '<li><a href="#" class="more-nav">More +</a></li>';
+	$items .= '<li><a href="#more-menu" class="more-nav">More +</a></li>';
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'zah_filter_nav_menu_items', 10, 2 );

@@ -12,24 +12,23 @@ jQuery(document).ready(function($) {
 
 	// When the Menu button is clicked, open the menu.
 	$('nav .more-nav').click(function(e) {
-		e.preventDefault();
 		$body = $('body');
 		$body.toggleClass('nav-open');
 
 		if( $body.is('.nav-open') ) {
 			// The menu is open, engage the bindEscapeKey() function
 			$body.on('keyup.bindEscape', bindEscapeKey );
-			$('#menu .close').focus();
+			$('#more-menu .close').focus();
 		}
+		e.preventDefault();
 	});
 
 	// If the close button or the magic shield is clicked close the menu. Pay attention if the event is a keyboard event or a mouse event.
-	$('#menu .close, #magic-shield').on('click keydown', function(e) {
+	$('#more-menu .close, #magic-shield').on('click keydown', function(e) {
 		if( e.keyCode && e.keyCode != 13 && e.keyCode != 27 ) {
 			return;
 		}
 
-		e.preventDefault();
 		$body = $('body');
 		$body.toggleClass('nav-open');
 
@@ -41,5 +40,6 @@ jQuery(document).ready(function($) {
 			// The menu is closed, disengage the bindEscapeKey() function
 			$body.off('keyup.bindEscape', bindEscapeKey );
 		}
+		e.preventDefault();
 	});
 });
