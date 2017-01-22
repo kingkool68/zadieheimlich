@@ -1,7 +1,8 @@
 <?php
 register_nav_menus(
 	array(
-		'main-menu' => 'Main Menu'
+		'main-menu' => 'Main Menu',
+		'more-menu' => 'Main Menu - More'
 	)
 );
 
@@ -18,7 +19,7 @@ add_action( 'wp_enqueue_scripts', 'zah_menu_wp_enqueue_scripts' );
  */
 function zah_menu_footer() {
 ?>
-	<nav id="menu">
+	<nav id="more-menu" class="more-menu">
 		<section>
 			<h2 class="title">Main Menu</h2>
 			<a href="#" class="close">
@@ -27,7 +28,7 @@ function zah_menu_footer() {
 			</a>
 			<?php
 			$args = array(
-				'menu' => 'main-menu',
+				'theme_location' => 'more-menu',
 				'container' => false,
 				'menu_class' => false,
 				'menu_id' => false,
@@ -44,3 +45,22 @@ function zah_menu_footer() {
 <?php
 }
 add_action( 'zah_footer', 'zah_menu_footer' );
+
+function zah_filter_nav_menu_items( $items, $args ) {
+	if ( ! is_object( $args ) || ! isset( $args->theme_location ) || $args->theme_location != 'main-menu' ) {
+		return $items;
+	}
+	$items .= '<li><a href="#more-menu" class="more-nav">More +</a></li>';
+	return $items;
+}
+add_filter( 'wp_nav_menu_items', 'zah_filter_nav_menu_items', 10, 2 );
+
+function zah_nav_menu_css_class($class, $item, $args){
+	return array();
+}
+add_filter('nav_menu_css_class' , 'zah_nav_menu_css_class' , 10 , 3);
+
+function zah_nav_menu_item_id($id) {
+	return '';
+}
+add_filter('nav_menu_item_id', 'zah_nav_menu_item_id');

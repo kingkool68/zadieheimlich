@@ -27,6 +27,10 @@ a {
 	text-decoration: none;
 	color: #C568C8;
 	border-bottom: 0.15em dotted #C568C8;
+	-webkit-transition: all 0.35s ease;
+	-moz-transition: all 0.35s ease;
+	-o-transition: all 0.35s ease;
+	transition: all 0.35s ease;
 }
 a:hover,
 a:focus {
