@@ -20,7 +20,9 @@ section.archive {
 		text-align: center;
 	}
 	.archive .heading {
+		font-size: 3.8em;
 		padding-right: 0;
+		padding-bottom: 0.2em;
 	}
 	.archive .subheading {
 		float: none;
