@@ -14,3 +14,16 @@ section.archive {
     top: 0.9em;
     float: right;
 }
+
+@media( max-width: 42.5em ) { /* 680px / 16 */
+	section.archive {
+		text-align: center;
+	}
+	.archive .heading {
+		padding-right: 0;
+	}
+	.archive .subheading {
+		float: none;
+		position: static;
+	}
+}
