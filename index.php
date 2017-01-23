@@ -1,29 +1,4 @@
-<?php
-function zah_archive_headings( $post ) {
-	global $wp_query;
-	/*
-	echo '<xmp>';
-	var_dump( $wp_query );
-	echo '</xmp>';
-	*/
-	$obj = get_queried_object();
-	$heading = '';
-	if ( is_tag() && $obj && isset( $obj->name ) ) {
-		$found = $wp_query->found_posts;
-		$found = number_format( $found );
-		$heading = $found . ' tagged "' . ucwords( $obj->name ) . '"';
-	}
-
-	if ( $heading ) {
-		$heading = wptexturize( $heading );
-	?>
-		<h1 class="archive-heading"><?php echo $heading; ?></h1>
-	<?php
-	}
-}
-add_action( 'zah_before_content', 'zah_archive_headings' );
-get_header();
-?>
+<?php get_header(); ?>
 	<?php do_action( 'zah_before_content', $post ); ?>
 	<div id="content">
 	<?php

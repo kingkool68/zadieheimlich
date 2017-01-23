@@ -51,6 +51,7 @@ include 'functions/admin.php';
 include 'functions/scripts-styles.php';
 include 'functions/dates.php';
 include 'functions/media.php';
+include 'functions/archive.php';
 include 'functions/menu.php';
 include 'functions/post-galleries.php';
 include 'vendor/ForceUTF8/Encoding.php';
