@@ -11,6 +11,7 @@ Bundle core WordPress stylesheets to save on requests
 @import url(chunks/form-reset.css);
 @import url(chunks/helpers.css);
 @import url(chunks/general.css);
+@import url(chunks/headings.css);
 @import url(chunks/media.css);
 @import url(chunks/video.css);
 @import url(chunks/svg-icons.css);
@@ -18,6 +19,7 @@ Bundle core WordPress stylesheets to save on requests
 @import url(chunks/menu.css);
 @import url(chunks/new-menu.css);
 @import url(chunks/article.css);
+@import url(chunks/archive.css);
 @import url(chunks/on-this-day.css);
 @import url(chunks/rsvp-page.css);
 @import url(chunks/attachments.css);

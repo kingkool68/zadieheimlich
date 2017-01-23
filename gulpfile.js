@@ -17,7 +17,7 @@ gulp.task('clean:min-js', function() {
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var wpIncludesDir = '../../../wp-includes/js';
-gulp.task('bundle-js', ['clean:min-js'], function() {
+gulp.task('js', ['clean:min-js'], function() {
 	return gulp.src([
 		// wpIncludesDir + '/jquery/jquery.js',
 		wpIncludesDir + '/jquery/jquery-migrate.js',
@@ -37,7 +37,7 @@ var path = require('path');
 var concatCSS = require('gulp-concat-css');
 var autoprefixer = require('gulp-autoprefixer');
 var cssnano = require('gulp-cssnano');
-gulp.task('default', ['clean:min-css'], function() {
+gulp.task('css', ['clean:min-css'], function() {
 	gulp.src('css/*.css')
 		.pipe(
 			// Loop over each stream, figure out the filename, and run the stream through concatCSS() passing along the dynamic filename
@@ -58,3 +58,5 @@ gulp.task('default', ['clean:min-css'], function() {
 		// Save out the new file
 		.pipe( gulp.dest('css/') );
 });
+
+gulp.task('default', ['css', 'js'] );
