@@ -19,6 +19,7 @@ Bundle core WordPress stylesheets to save on requests
 @import url(chunks/menu.css);
 @import url(chunks/new-menu.css);
 @import url(chunks/article.css);
+@import url(chunks/archive.css);
 @import url(chunks/on-this-day.css);
 @import url(chunks/rsvp-page.css);
 @import url(chunks/attachments.css);
