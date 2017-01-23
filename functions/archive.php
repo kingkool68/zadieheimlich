@@ -8,6 +8,18 @@ function zah_archive_headings( $post ) {
 	if ( is_tag() && $obj && isset( $obj->name ) ) {
 		$heading = ucwords( $obj->name );
 	}
+	if ( is_category() && $obj && isset( $obj->name ) ) {
+		$heading = ucwords( $obj->name );
+		switch( $heading ) {
+			case 'Video':
+				$heading = 'Videos';
+				break;
+
+			case 'Gallery':
+				$heading = 'Galleries';
+				break;
+		}
+	}
 
 	$year = get_query_var( 'year' );
 	$month = get_query_var( 'monthnum' );
