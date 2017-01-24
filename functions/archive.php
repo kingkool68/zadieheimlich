@@ -39,7 +39,11 @@ function zah_archive_headings( $post ) {
 
 	if ( $found = $wp_query->found_posts ) {
 		$found = number_format( $found );
-		$subheading[] = $found . ' items';
+		$label = 'item';
+		if ( $found > 1 ) {
+			$label .= 's';
+		}
+		$subheading[] = $found . ' ' . $label;
 	}
 
 	$page = intval( get_query_var( 'paged' ) );
