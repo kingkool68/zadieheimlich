@@ -35,6 +35,7 @@ function zah_wp_enqueue_scripts() {
 
 	// JavaScript
 	wp_register_script( 'post-gallery', get_template_directory_uri() . '/js/post-gallery.js', array('jquery'), NULL, true );
+	wp_enqueue_script( 'zah-analytics', get_template_directory_uri() . '/js/analytics.js', array('jquery'), NULL, true );
 
 	// Global JavaScript files bundled into one that gets loaded on every single page
 	wp_register_script( 'zah-global-scripts', get_template_directory_uri() . '/js/global.min.js', array('jquery'), NULL, true );
@@ -76,7 +77,7 @@ function zah_dont_load_bundled_scripts( $script_element, $handle, $script_src ) 
 	}
 
 	// These scripts are bundled together in 'zah-global-scripts' so they don't need to be printed to the screen.
-	$blacklisted = array( 'jquery-migrate', 'wp-embed', 'zah-menu', 'mediaelement', 'wp-mediaelement' );
+	$blacklisted = array( 'jquery-migrate', 'wp-embed', 'zah-menu', 'zah-analytics', 'mediaelement', 'wp-mediaelement' );
 	if( in_array( $handle, $blacklisted ) ) {
 		return '';
 	}

@@ -16,7 +16,7 @@
 		<?php zah_the_instagram_media(); ?>
 		<?php the_content(); ?>
 
-		<p class="via">(via <a href="<?php echo $post->guid; ?>">@<?php echo get_instagram_username(); ?></a>)</p>
+		<p class="via">(via <a href="<?php echo $post->guid; ?>" data-trk-category="instagram-via" data-trk-label="@<?php echo esc_attr( get_instagram_username() ); ?>|<?php echo esc_url( get_permalink() );?>">@<?php echo get_instagram_username(); ?></a>)</p>
 	</div>
 
 	<?php do_action( 'zah_content_footer', $post ); ?>

@@ -22,7 +22,7 @@ function zah_menu_footer() {
 	<nav id="more-menu" class="more-menu">
 		<section>
 			<h2 class="title">Main Menu</h2>
-			<a href="#" class="close">
+			<a href="#" class="close" data-trk-category="nav" data-trk-label="Close|#">
 				<span aria-hidden="true">&times;</span>
 				<span class="alt-text">Close</span>
 			</a>
@@ -36,9 +36,9 @@ function zah_menu_footer() {
 			wp_nav_menu( $args );
 			?>
 			<p class="social-links">
-				<a href="https://github.com/kingkool68/zadieheimlich" class="github" title="The code that powers this site is on GitHub"><?php echo zah_svg_icon( 'github' ); ?></a>
-				<a href="https://www.instagram.com/lilzadiebug/" class="instagram" rel="me" title="Follow Zadie on Instagram @LilZadieBug"><?php echo zah_svg_icon( 'instagram' ); ?></a>
-				<a href="https://www.facebook.com/media/set/?set=ft.10101891838917048&type=1" title="Zadie's on Facebook"><?php echo zah_svg_icon( 'facebook' ); ?></a>
+				<a href="https://github.com/kingkool68/zadieheimlich" class="github" title="The code that powers this site is on GitHub" data-trk-category="nav" data-trk-label="GitHub|icon"><?php echo zah_svg_icon( 'github' ); ?></a>
+				<a href="https://www.instagram.com/lilzadiebug/" class="instagram" rel="me" title="Follow Zadie on Instagram @LilZadieBug" data-trk-category="nav" data-trk-label="Instagram|icon"><?php echo zah_svg_icon( 'instagram' ); ?></a>
+				<a href="https://www.facebook.com/media/set/?set=ft.10101891838917048&type=1" title="Zadie's on Facebook" data-trk-category="nav" data-trk-label="Facebook|icon"><?php echo zah_svg_icon( 'facebook' ); ?></a>
 			</p>
 		</section>
 	</nav>
@@ -50,7 +50,7 @@ function zah_filter_nav_menu_items( $items, $args ) {
 	if ( ! is_object( $args ) || ! isset( $args->theme_location ) || $args->theme_location != 'main-menu' ) {
 		return $items;
 	}
-	$items .= '<li><a href="#more-menu" class="more-nav">More +</a></li>';
+	$items .= '<li><a href="#more-menu" class="more-nav" data-trk-category="nav" data-trk-label="More +|#more-menu">More +</a></li>';
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'zah_filter_nav_menu_items', 10, 2 );
@@ -64,3 +64,10 @@ function zah_nav_menu_item_id($id) {
 	return '';
 }
 add_filter('nav_menu_item_id', 'zah_nav_menu_item_id');
+
+function zah_nav_menu_link_attributes( $attr = array(), $item ) {
+	$attr['data-trk-category'] = 'nav';
+	$attr['data-trk-label'] = $item->title . '|' . $item->url;
+	return $attr;
+}
+add_filter('nav_menu_link_attributes', 'zah_nav_menu_link_attributes', 10, 2);

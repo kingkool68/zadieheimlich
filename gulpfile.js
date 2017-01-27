@@ -26,6 +26,7 @@ gulp.task('js', ['clean:min-js'], function() {
 		wpIncludesDir + '/mediaelement/mediaelement-and-player.min.js',
 		wpIncludesDir + '/mediaelement/wp-mediaelement.js',
 		'js/menu.js',
+		'js/analytics.js'
 	])
 		.pipe( concat('global.min.js') )
 		.pipe( uglify() )

@@ -42,7 +42,7 @@
 	<a id="top" href="#content">Skip to Content</a>
 	<header class="clearfix">
 		<div class="holder">
-			<h1 class="site-title"><a href="<?php echo get_site_url(); ?>">Zadie Heimlich</a></h1>
+			<h1 class="site-title"><a href="<?php echo get_site_url(); ?>" data-trk-category="nav" data-trk-label="Site Title|Zadie Heimlich">Zadie Heimlich</a></h1>
 			<p class="zadies-current-age"><?php echo get_zadies_current_age(); ?> old.</p>
 		</div>
 	</header>
