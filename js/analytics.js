@@ -11,6 +11,6 @@ jQuery(document).ready(function($) {
 		var eventCategory = $this.data('trk-category');
 		var eventAction = 'click';
 		var eventLabel = $this.data('trk-label');
-		ga('send', 'event', eventCategory, eventAction, eventLabel);
+		ga('send', 'event', eventCategory, eventAction, eventLabel, {transport: 'beacon'});
 	});
 });
