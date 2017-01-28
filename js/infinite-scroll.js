@@ -157,11 +157,11 @@ jQuery(document).ready(function($) {
 				}
 
 				// Fire off a Google Analytics event
-				if( typeof(__gaTracker) === 'function' ) {
+				if( typeof __gaTracker === 'function' ) {
 					ga = __gaTracker;
 				}
-				if( typeof(ga) === 'function' ){
-					ga('send', 'event', 'infinite-scroll', 'depth', nextURL);
+				if( typeof ga === 'function' ){
+					ga('send', 'event', 'Infinite Scroll', nextURL);
 				}
 
 			},
