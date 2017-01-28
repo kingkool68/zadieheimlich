@@ -15,6 +15,15 @@ function pre_dump() {
 	echo '</pre>';
 }
 
+// Google Analytics Debugging flag
+function zah_google_analytics_debugging_flag( $class = array() ) {
+	if ( is_user_logged_in() && isset( $_GET['debug-ga'] ) ) {
+		$class[] = 'debug-ga';
+	}
+	return $class;
+}
+add_filter( 'body_class', 'zah_google_analytics_debugging_flag' );
+
 /**
  * Get the ordinal suffix of an int (e.g. th, rd, st, etc.)
  *
